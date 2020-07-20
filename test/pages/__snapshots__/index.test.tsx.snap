@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Home page matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="jsx-2250570153 container"
+  >
+    <main
+      class="jsx-2250570153"
+    >
+      <h1
+        class="jsx-2250570153 title"
+      >
+        Decentramall
+      </h1>
+    </main>
+    <footer
+      class="jsx-2250570153"
+    >
+      <a
+        class="jsx-2250570153"
+        href="https://hackfs.com/"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        In progress...
+      </a>
+    </footer>
+  </div>
+</DocumentFragment>
+`;
