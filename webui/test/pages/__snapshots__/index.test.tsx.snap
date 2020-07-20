@@ -3,29 +3,17 @@
 exports[`Home page matches snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="jsx-2250570153 container"
+    class="MuiContainer-root MuiContainer-maxWidthSm"
   >
-    <main
-      class="jsx-2250570153"
+    <div
+      class="MuiBox-root MuiBox-root-1"
     >
       <h1
-        class="jsx-2250570153 title"
+        class="MuiTypography-root MuiTypography-h4 MuiTypography-gutterBottom"
       >
         Decentramall
       </h1>
-    </main>
-    <footer
-      class="jsx-2250570153"
-    >
-      <a
-        class="jsx-2250570153"
-        href="https://hackfs.com/"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        In progress...
-      </a>
-    </footer>
+    </div>
   </div>
 </DocumentFragment>
 `;
