@@ -1,17 +1,6 @@
 import { createPow } from '@textile/powergate-client'
 import React from 'react'
-// export const Space = (): JSX.Element => {
-//   return (
-//     <Container maxWidth="sm">
-//       <Box my={4}>
-//         <Typography variant="h4" component="h1" gutterBottom>
-//           User
-//         </Typography>
-//       </Box>
-//     </Container>
-//   )
-// }
-import * as System from 'slate-react-system'
+import { CreateToken, CreateFilecoinStorageDeal } from 'slate-react-system';
 
 class User extends React.Component {
   _PG = null
@@ -25,12 +14,40 @@ class User extends React.Component {
     this._PG.setToken(token)
     this.setState({ token })
   }
+
+  _handleSubmit = async (data) => {
+    const file = data.file.files[0];
+    var buffer = [];
+    // NOTE(jim): A little hacky...
+    const getByteArray = async () =>
+      new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = function (e) {
+          if (e.target.readyState == FileReader.DONE) {
+            buffer = new Uint8Array(e.target.result as any) as any;
+          }
+          resolve();
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    await getByteArray();
+    const { cid } = await this._PG.ffs.addToHot(buffer);
+    const { jobId } = await this._PG.ffs.pushConfig(cid);
+    const cancel = this._PG.ffs.watchJobs((job) => {
+      console.log(job);
+    }, jobId);
+  }
+
+
   render() {
     return (
-      <System.CreateToken
-        token={this.state.token}
-        onClick={this._handleCreateToken}
-      />
+      <>
+        <CreateToken
+          token={this.state.token}
+          onClick={this._handleCreateToken}
+        />
+        <CreateFilecoinStorageDeal onSubmit={this._handleSubmit} />
+      </>
     )
   }
 }
