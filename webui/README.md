@@ -20,6 +20,8 @@ yarn install
 yarn dev
 ```
 
+Requires powergate running. See here https://docs.textile.io/powergate/localnet/#setup
+
 ### Run tests
 
 ```bash
