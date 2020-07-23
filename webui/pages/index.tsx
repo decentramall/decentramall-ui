@@ -1,4 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
+import React from 'react'
+import { appendBaseURL } from '../src/utils/url'
 
 const useStyles = makeStyles((theme) => ({
   storeContainer: {
@@ -7,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     gridAutoRows: '139px',
     gridAutoFlow: 'dense',
     gridGap: '3px',
-    background: `linear-gradient(to right, ${theme.palette.common.black}, ${theme.palette.grey['A400']})`,
+    background: `linear-gradient(to right, ${theme.palette.background.default}, ${theme.palette.grey['A400']})`,
   },
   store: {
     overflow: 'hidden',
@@ -44,18 +46,22 @@ export const Home = (): JSX.Element => {
       <div className={classes.storeContainer}>
         {topItems.map((el, index) => {
           return (
-            <div key={`store-${index}`} className={`${classes.store}`}>
-              <img src={`/stores/store-${el}.png`} />
+            <div key={`space-${index}`} className={`${classes.store}`}>
+              <a href={appendBaseURL('space', true)}>
+                <img src={`images/spaces/space-${el}.png`} />
+              </a>
             </div>
           )
         })}
         <div className={classes.logo}>
-          <img src="/logo.png" />
+          <img src="images/logo.png" />
         </div>
         {bottomItems.map((el, index) => {
           return (
-            <div key={`store-${index}`} className={`${classes.store}`}>
-              <img src={`/stores/store-${el}.png`} />
+            <div key={`space-${index}`} className={`${classes.store}`}>
+              <a href={appendBaseURL('space', true)}>
+                <img src={`images/spaces/space-${el}.png`} />
+              </a>
             </div>
           )
         })}

@@ -29,8 +29,10 @@ yarn test
 ### Build assets
 
 Build static assets in `out/` directory to serve
+
+It's possible to declare a base url, useful when creating a build for IPFS environments
 ```bash
-yarn build
+BASE_URL=some/base/url yarn build
 ```
 
 
