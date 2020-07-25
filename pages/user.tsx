@@ -1,18 +1,21 @@
 import { createPow } from '@textile/powergate-client'
 import React from 'react'
-import { CreateToken, CreateFilecoinStorageDeal } from 'slate-react-system';
+import { CreateFilecoinStorageDeal } from 'slate-react-system';
+import { Button } from '@material-ui/core';
 
 class User extends React.Component {
-  _PG = null
+  PowerGate = null
   state = {
-    token: null,
+    cid: ""
   }
-  _handleCreateToken = async () => {
-    this._PG = createPow({ host: 'http://0.0.0.0:6002' })
-    const FFS = await this._PG.ffs.create()
-    const token = FFS.token ? FFS.token : null
-    this._PG.setToken(token)
-    this.setState({ token })
+  componentDidMount = () => {
+    this.PowerGate = createPow({ host: 'http://0.0.0.0:6002' })
+    this.PowerGate.setToken(process.env.NEXT_FFS_TOKEN)
+  }
+
+  _getId = async () => {
+    console.log(await this.PowerGate.ffs.get(this.state.cid));
+    console.log(await this.PowerGate.ffs.showAll());
   }
 
   _handleSubmit = async (data) => {
@@ -31,10 +34,13 @@ class User extends React.Component {
         reader.readAsArrayBuffer(file);
       });
     await getByteArray();
-    const { cid } = await this._PG.ffs.addToHot(buffer);
-    const { jobId } = await this._PG.ffs.pushConfig(cid);
-    const cancel = this._PG.ffs.watchJobs((job) => {
+    const { cid } = await this.PowerGate.ffs.stage(buffer);
+    const { jobId } = await this.PowerGate.ffs.pushStorageConfig(cid);
+    console.log(jobId);
+    const cancel = this.PowerGate.ffs.watchJobs((job) => {
       console.log(job);
+      this.PowerGate.ffs.get(job.cid).then(console.log);
+      this.setState({ cid: job.cid });
     }, jobId);
   }
 
@@ -42,11 +48,8 @@ class User extends React.Component {
   render() {
     return (
       <>
-        <CreateToken
-          token={this.state.token}
-          onClick={this._handleCreateToken}
-        />
         <CreateFilecoinStorageDeal onSubmit={this._handleSubmit} />
+        <Button onClick={this._getId}>Get</Button>
       </>
     )
   }
