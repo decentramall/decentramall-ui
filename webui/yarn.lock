@@ -8237,10 +8237,10 @@ slash@^3.0.0:
   resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
   integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
 
-slate-react-system@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/slate-react-system/-/slate-react-system-0.0.6.tgz#2044e3aa8a9df911ba277405913ec6ed53db2ed4"
-  integrity sha512-67kFjsBMDHtu0OS6aWzBocIRlk49r5JWIyChABsmpg1SNUwh4RTBey3EE0c1CctVG4s8ihfgwXQACODwS36w+g==
+slate-react-system@0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/slate-react-system/-/slate-react-system-0.0.4.tgz#221c52bac0ea96e9abfab52ae84f89cbeaa07230"
+  integrity sha512-roBmCyr6DETHTnei9FPMkKIPUk4F4rc8jq4+7O9yGzelO6hvhzlwT17R0A34bu+7N+KQ8Q0sRLdJu3N29fkntw==
 
 slice-ansi@^2.1.0:
   version "2.1.0"
