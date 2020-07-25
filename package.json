@@ -27,7 +27,7 @@
     "next": "latest",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "slate-react-system": "^0.0.6"
+    "slate-react-system": "0.0.4"
   },
   "devDependencies": {
     "@testing-library/react": "^10.0.1",
