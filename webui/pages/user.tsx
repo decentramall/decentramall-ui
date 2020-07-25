@@ -3,18 +3,28 @@ import React from 'react'
 import { CreateFilecoinStorageDeal } from 'slate-react-system';
 import { Button } from '@material-ui/core';
 
-class User extends React.Component {
+
+interface IUserState {
+  cid: string;
+}
+class User extends React.Component<{}, IUserState> {
   PowerGate = null
-  state = {
-    cid: ""
+
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      cid: ""
+    };
   }
+
   componentDidMount = () => {
     this.PowerGate = createPow({ host: 'http://0.0.0.0:6002' })
-    this.PowerGate.setToken(process.env.NEXT_FFS_TOKEN)
+    console.log('process.env.NEXT_FFS_TOKEN', process.env.NEXT_PUBLIC_FFS_TOKEN);
+    this.PowerGate.setToken(process.env.NEXT_PUBLIC_FFS_TOKEN)
   }
 
   _getId = async () => {
-    console.log(await this.PowerGate.ffs.get(this.state.cid));
+    // console.log(await this.PowerGate.ffs.get(this.state.cid));
     console.log(await this.PowerGate.ffs.showAll());
   }
 
