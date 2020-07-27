@@ -1,11 +1,13 @@
 import { createPow } from '@textile/powergate-client'
 import React from 'react'
 import { CreateFilecoinStorageDeal } from 'slate-react-system';
-import { Button } from '@material-ui/core';
+import { Button, Input } from '@material-ui/core';
 
 
 interface IRentState {
     cid: string;
+    rented: string;
+    picture?: any;
 }
 class Rent extends React.Component<{}, IRentState> {
     PowerGate = null
@@ -13,14 +15,22 @@ class Rent extends React.Component<{}, IRentState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            cid: ""
+            cid: '',
+            rented: ''
         };
     }
 
     componentDidMount = () => {
-        this.PowerGate = createPow({ host: 'http://0.0.0.0:6002' })
-        console.log('process.env.NEXT_FFS_TOKEN', process.env.NEXT_PUBLIC_FFS_TOKEN);
+        this.PowerGate = createPow({ host: process.env.NEXT_PUBLIC_POWERGATE_URL })
         this.PowerGate.setToken(process.env.NEXT_PUBLIC_FFS_TOKEN)
+        // TODO: chack if user has rented space
+    }
+
+    handleSubmitNewRent = () => {
+        // TODO: verify fields
+        // TODO: upload image first
+        // TODO: wait for image cid, generated json and upload it
+        // TODO: wait for json cid, and add it to the tokenURI
     }
 
     _getId = async () => {
@@ -29,7 +39,11 @@ class Rent extends React.Component<{}, IRentState> {
     }
 
     _handleSubmit = async (data) => {
-        const file = data.file.files[0];
+        //const file = data.file.files[0];
+        const file = this.state.picture;
+        if (file === undefined) {
+            return;
+        }
         var buffer = [];
         // NOTE(jim): A little hacky...
         const getByteArray = async () =>
@@ -49,16 +63,23 @@ class Rent extends React.Component<{}, IRentState> {
         console.log(jobId);
         const cancel = this.PowerGate.ffs.watchJobs((job) => {
             console.log(job);
+            // the status 5 means: deal finished
             this.PowerGate.ffs.get(job.cid).then(console.log);
             this.setState({ cid: job.cid });
         }, jobId);
     }
 
+    selectImage = (event: React.ChangeEvent<any>) => {
+        this.setState({ picture: event.target.files[0] });
+    }
 
     render() {
+        // TODO: if valid rent space get
         return (
             <>
-                <CreateFilecoinStorageDeal onSubmit={this._handleSubmit} />
+                <Input type="file" onChange={this.selectImage} />
+                {/* <CreateFilecoinStorageDeal onSubmit={this._handleSubmit} /> */}
+                <Button onClick={this._handleSubmit}>Submit</Button>
                 <Button onClick={this._getId}>Get</Button>
             </>
         )
