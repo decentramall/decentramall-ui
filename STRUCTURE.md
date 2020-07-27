@@ -8,6 +8,8 @@ Once we understand this mechanisms, [Building an App with Filecoin from scratch 
 
 Further documentation for powergate js, can be found [here](https://textileio.github.io/js-powergate-client/globals.html).
 
+See [here](https://textileio.github.io/js-powergate-client/interfaces/_node_modules__textile_grpc_powergate_client_dist_ffs_rpc_rpc_pb_d_.jobstatusmap.html) the job status when making a storage deal.
+
 # important notes
 **question**: Hi guys, I have a question. I might have misunderstood this. A user pays to store data on filecoin. And then pays to get it back? Like everytime I make a request I have to pay?<br/>
 **answer**: Yeah there’s a Retrieval Market where Retrieval Miners fetch the data from Storage Miners. Currently it’s a basic MVP but it will evolve so that Retrieval Miners can compete on price, performance, location, caching popular content, etc. It allows Retrieval miners with high-bandwidth and great network locality to excel at this. An analogy is [S3's Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html).
