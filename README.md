@@ -20,7 +20,7 @@ yarn install
 yarn dev
 ```
 
-Requires powergate running. See here https://docs.textile.io/powergate/localnet/#setup
+Requires powergate running. See [here](https://docs.textile.io/powergate/localnet/#setup). Everytime you start a the local testnet, it starts with clean spaces, so you need to create an FFS. Run `pow ffs create` (see [here](https://docs.textile.io/powergate/#command-line-interface) how to install *pow cli*) anywhere on your machine and copy the token to *.env.local* file to *NEXT_PUBLIC_FFS_TOKEN* variable.
 
 ### Run tests
 
