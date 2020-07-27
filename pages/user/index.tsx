@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core';
 import Rent from './rent';
+import Space from './space';
+import { ChainContext, IChainContext } from '../_app';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -36,19 +38,26 @@ export default function Home() {
         event.preventDefault();
     }
 
-    let currentView;
-    if (view === 'rent') {
-        currentView = <Rent />;
-    } else {
-        currentView = <div className={classes.options}>
-            <div className={classes.circle}>
-                SPACE
-            </div>
-            <div className={classes.circle} onClick={(e) => openView(e, 'rent')}>
-                Rent
-            </div>
-        </div>;
+    const navigateOptions = (chainContext: IChainContext) => {
+        if (view === 'space') {
+            return <Space spaces={chainContext.spaces} />;
+        } else if (view === 'rent') {
+            return <Rent />;
+        } else {
+            return <div className={classes.options}>
+                <div className={classes.circle} onClick={(e) => openView(e, 'space')}>
+                    SPACE
+                </div>
+                <div className={classes.circle} onClick={(e) => openView(e, 'rent')}>
+                    Rent
+                </div>
+            </div>;
+        }
     }
 
-    return currentView;
+    return (
+        <ChainContext.Consumer>
+            {(chainContext) => navigateOptions(chainContext)}
+        </ChainContext.Consumer>
+    );
 }
