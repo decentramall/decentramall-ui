@@ -47,7 +47,7 @@ export const Home = (): JSX.Element => {
         {topItems.map((el, index) => {
           return (
             <div key={`space-${index}`} className={`${classes.store}`}>
-              <a href={appendBaseURL('space', true)}>
+              <a href={appendBaseURL('navigate', true)}>
                 <img src={`images/spaces/space-${el}.png`} />
               </a>
             </div>
@@ -59,7 +59,7 @@ export const Home = (): JSX.Element => {
         {bottomItems.map((el, index) => {
           return (
             <div key={`space-${index}`} className={`${classes.store}`}>
-              <a href={appendBaseURL('space', true)}>
+              <a href={appendBaseURL('navigate', true)}>
                 <img src={`images/spaces/space-${el}.png`} />
               </a>
             </div>
