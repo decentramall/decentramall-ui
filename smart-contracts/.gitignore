@@ -113,3 +113,4 @@ types/
 .openzeppelin/dev-5777.json
 
 db_ganache/
+ganache-db-devenv/
