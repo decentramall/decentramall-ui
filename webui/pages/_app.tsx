@@ -12,20 +12,9 @@ import {
     DecentramallTokenInstance,
     EstateAgentInstance
 } from '../../smart-contracts/types/truffle-contracts/index';
+import { IUser, IChainContext } from '../src/types'
 
 
-export interface IChainContext {
-    spaces: string[];
-    rents: string[];
-    user: {
-        space: {
-            buyer: string;
-            price: string;
-            tokenId: string;
-        } | undefined;
-        rent: string;
-    }
-}
 export const ChainContext = React.createContext<IChainContext>({
     spaces: [],
     rents: [],
@@ -38,11 +27,7 @@ export const ChainContext = React.createContext<IChainContext>({
 export default function MyApp(props: AppProps) {
     const [spaces, setSpaces] = useState<string[]>([]);
     const [rents, setRents] = useState<string[]>([]);
-    const [user, setUser] = useState<{ space: {
-        buyer: string;
-        price: string;
-        tokenId: string;
-    } | undefined, rent: string }>({ space: '', rent: '' });
+    const [user, setUser] = useState<IUser>({ space: undefined, rent: '' });
     const { Component, pageProps } = props
 
     React.useEffect(() => {
