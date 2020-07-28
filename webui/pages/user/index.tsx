@@ -1,37 +1,40 @@
 import React, { useState } from 'react'
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Container, Grid, Paper, Typography } from '@material-ui/core';
 import Rent from './rent';
 import Space from './space';
 import { ChainContext, IChainContext } from '../_app';
 
 
 const useStyles = makeStyles((theme) => ({
-    options: {
-        marginTop: '15%',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
+    root: {
+        flexGrow: 1,
     },
-    circle: {
-        margin: '2%',
-        width: '150px',
-        height: '150px',
-        borderRadius: '50%',
-        background: '#38a9e4',
-        color: 'white',
-        fontFamily: 'Helvetica, Arial Black, sans',
-        textAlign: 'center',
-        display: 'flex',
+    paper: {
+        flex: 1,
+        flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center',
+        height: 150,
+        width: 150,
         cursor: 'pointer',
-    }
+    },
+    control: {
+        padding: theme.spacing(2),
+    },
 }))
 
 export default function Home() {
     const classes = useStyles()
     const [view, setView] = useState<string | undefined>();
+    const choices = [
+        {
+            title: 'Buy SPACE',
+            picture: 'images/navigate-icons/category.svg',
+        },
+        {
+            title: 'Rent SPACE',
+            picture: 'images/navigate-icons/others.svg',
+        },
+    ]
 
     const openView = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, newView: string) => {
         setView(newView);
@@ -44,14 +47,21 @@ export default function Home() {
         } else if (view === 'rent') {
             return <Rent />;
         } else {
-            return <div className={classes.options}>
-                <div className={classes.circle} onClick={(e) => openView(e, 'space')}>
-                    SPACE
-                </div>
-                <div className={classes.circle} onClick={(e) => openView(e, 'rent')}>
-                    Rent
-                </div>
-            </div>;
+            return <Container maxWidth="sm">
+                {/* TODO: align vertically */}
+                <Grid container justify="center" spacing={5} style={{ marginTop: '40%' }}>
+                    {choices.map((choice) => (
+                        <Grid key={choice.title} item>
+                            <Paper className={classes.paper}>
+                                <img height="95" src={choice.picture} />
+                                <Typography variant="body1" component="p" gutterBottom>
+                                    {choice.title}
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                    ))}
+                </Grid>
+            </Container>;
         }
     }
 
