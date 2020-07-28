@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 import React from 'react'
 import { appendBaseURL } from '../src/utils/url'
+import { Button } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   storeContainer: {
@@ -41,6 +42,16 @@ export const Home = (): JSX.Element => {
 
   const topItems = range(1, 12, 1)
   const bottomItems = range(13, 27, 1)
+
+  const handleSearch = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+
+  }
+
+  const handleGoProfile = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    window.location.href = appendBaseURL('user', true);
+    event.preventDefault();
+  }
+
   return (
     <>
       <div className={classes.storeContainer}>
@@ -55,6 +66,8 @@ export const Home = (): JSX.Element => {
         })}
         <div className={classes.logo}>
           <img src="images/logo.png" />
+          <Button variant="contained" color="primary" onClick={handleSearch}>Search</Button>
+          <Button variant="contained" color="primary" onClick={handleGoProfile}>Go Profile</Button>
         </div>
         {bottomItems.map((el, index) => {
           return (
