@@ -49,14 +49,15 @@ export default function MyApp(props: AppProps) {
                 provider,
             ) as ethers.Contract & DecentramallTokenInstance;
 
-            // TODO: load spaces
+            // load all spaces
             // a much more efficient way, would be to load from events, for example, using TheGraph
             const totalTokens = await tokenContract.totalSupply();
+            const loadedSpaces = [];
             for (let t = 0; t < totalTokens.toNumber(); t += 1) {
-                console.log(await tokenContract.tokenByIndex(t));
+                loadedSpaces.push(await tokenContract.tokenByIndex(t));
             }
+            setSpaces(loadedSpaces);
             // TODO: load rents
-            setSpaces(['ola', 'xau']);
         }
 
         loadWeb3();
