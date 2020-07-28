@@ -13,12 +13,6 @@
     "test": "jest",
     "test-all": "yarn lint && yarn type-check && yarn test"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "yarn run type-check"
-    }
-  },
   "lint-staged": {
     "*.@(ts|tsx)": [
       "organize-imports-cli",
@@ -27,10 +21,13 @@
     ]
   },
   "dependencies": {
+    "@emotion/react": "^11.0.0-next.13",
     "@material-ui/core": "^4.11.0",
+    "@textile/powergate-client": "^0.2.0",
     "next": "latest",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "slate-react-system": "0.0.4"
   },
   "devDependencies": {
     "@testing-library/react": "^10.0.1",

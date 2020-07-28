@@ -13,17 +13,17 @@ const theme = createMuiTheme({
     error: {
       main: red.A400,
     },
-    background: {
-      paper: '#424242',
-      default: '#303030',
-    },
-    text: {
-      primary: '#fff',
-      secondary: 'rgba(255, 255, 255, 0.7)',
-      disabled: 'rgba(255, 255, 255, 0.5)',
-      hint: 'rgba(255, 255, 255, 0.5)',
-    },
-    divider: 'rgba(255, 255, 255, 0.12)',
+    // background: {
+    //   paper: '#424242',
+    //   default: '#303030',
+    // },
+    // text: {
+    //   primary: '#fff',
+    //   secondary: 'rgba(255, 255, 255, 0.7)',
+    //   disabled: 'rgba(255, 255, 255, 0.5)',
+    //   hint: 'rgba(255, 255, 255, 0.5)',
+    // },
+    // divider: 'rgba(255, 255, 255, 0.12)',
   },
 })
 
