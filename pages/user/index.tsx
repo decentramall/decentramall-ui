@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { makeStyles, Container, Grid, Paper, Typography } from '@material-ui/core';
 import Rent from './rent';
 import Space from './space';
-import { ChainContext, IChainContext } from '../_app';
+import { ChainContext } from '../_app';
+import { IChainContext, IUser } from '../../src/types';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -31,11 +32,7 @@ export default function Home() {
         event.preventDefault();
     }
 
-    const choices = (user: { space: {
-        buyer: string;
-        price: string;
-        tokenId: string;
-    } | undefined, rent: string }) => {
+    const choices = (user: IUser) => {
         return [
             {
                 title: (user.space !== undefined ? 'See your' : 'Buy') + ' SPACE',

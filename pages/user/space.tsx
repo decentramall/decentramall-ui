@@ -2,7 +2,8 @@ import Box from '@material-ui/core/Box'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
-import { ChainContext, IChainContext } from '../_app'
+import { ChainContext } from '../_app'
+import { IChainContext } from '../../src/types'
 
 
 
