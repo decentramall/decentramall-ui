@@ -5,6 +5,14 @@ export interface ISpace {
     tokenId: string;
 };
 
+export interface IRent {
+    title: string;
+    description: string;
+    category: string;
+    logo: string;
+    url: string;
+};
+
 export interface IUser {
     space: ISpace | undefined;
     rent: string;
