@@ -12,7 +12,7 @@ import {
     DecentramallTokenInstance,
     EstateAgentInstance
 } from '../../smart-contracts/types/truffle-contracts/index';
-import { IUser, IChainContext } from '../src/types'
+import { IUser, IChainContext, ISpace } from '../src/types'
 
 
 export const ChainContext = React.createContext<IChainContext>({
@@ -25,7 +25,7 @@ export const ChainContext = React.createContext<IChainContext>({
 });
 
 export default function MyApp(props: AppProps) {
-    const [spaces, setSpaces] = useState<string[]>([]);
+    const [spaces, setSpaces] = useState<ISpace[]>([]);
     const [rents, setRents] = useState<string[]>([]);
     const [user, setUser] = useState<IUser>({ space: undefined, rent: '' });
     const { Component, pageProps } = props
@@ -47,6 +47,7 @@ export default function MyApp(props: AppProps) {
             // send ether and pay to change state within the blockchain.
             // For this, we need the account signer...
             const signer = provider.getSigner();
+            const signerAddress = await signer.getAddress();
 
             const { chainId } = await provider.getNetwork();
             const decentramallTokenInstance = new ethers.Contract(
@@ -54,35 +55,40 @@ export default function MyApp(props: AppProps) {
                 DecentramallTokenJSON.abi,
                 provider,
             ) as ethers.Contract & DecentramallTokenInstance;
-            const estateAgentInstance = new ethers.Contract(
-                EstateAgentJSON.networks[chainId].address,
-                EstateAgentJSON.abi,
-                provider,
-            ) as ethers.Contract & EstateAgentInstance;
+            // const estateAgentInstance = new ethers.Contract(
+            //     EstateAgentJSON.networks[chainId].address,
+            //     EstateAgentJSON.abi,
+            //     provider,
+            // ) as ethers.Contract & EstateAgentInstance;
 
             // load all spaces
             // a much more efficient way, would be to load from events, for example, using TheGraph
             const totalTokens = await decentramallTokenInstance.totalSupply();
             if (totalTokens.toNumber() > 0) {
-                const ifaceEstateAgent = new ethers.utils.Interface(EstateAgentJSON.abi);
-                const myBoughtSpaces = await provider.getLogs(
-                    estateAgentInstance.filters.BuyToken(await signer.getAddress(), null, null)
-                );
-                if (myBoughtSpaces.length > 0) {
-                    const log = ifaceEstateAgent.parseLog(myBoughtSpaces[myBoughtSpaces.length - 1]);
-                    const space = {
-                        buyer: log.args.buyer.toString(),
-                        price: log.args.price.toString(),
-                        tokenId: log.args.tokenId.toString(),
+                const mapSpace = (logArgs: any) => {
+                    return {
+                        buyer: logArgs.buyer.toString(),
+                        price: logArgs.price.toString(),
+                        tokenId: logArgs.tokenId.toString(),
                     }
-                    setUser({ space, rent: '' });
+                }
+                const ifaceEstateAgent = new ethers.utils.Interface(EstateAgentJSON.abi);
+                const logsEstateAgent = await provider.getLogs({
+                    address: EstateAgentJSON.networks[chainId].address,
+                    fromBlock: 0,
+                    toBlock: 'latest',
+                    topics: [[
+                        ethers.utils.id('BuyToken(address,uint256,uint256)'),
+                    ]]
+                });
+
+                if (logsEstateAgent.length > 0) {
+                    const mappedSpace = logsEstateAgent.map((log) => mapSpace(ifaceEstateAgent.parseLog(log).args));
+                    const userSpace = mappedSpace.find((s) => s.buyer === signerAddress);
+                    setSpaces(mappedSpace);
+                    setUser({ space: userSpace, rent: '' });
                 }
             }
-            const loadedSpaces = [];
-            for (let t = 0; t < totalTokens.toNumber(); t += 1) {
-                loadedSpaces.push((await decentramallTokenInstance.tokenByIndex(t)).toString());
-            }
-            setSpaces(loadedSpaces);
             // TODO: load rents
         }
 
