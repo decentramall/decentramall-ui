@@ -1,5 +1,5 @@
 
-interface ISpace {
+export interface ISpace {
     buyer: string;
     price: string;
     tokenId: string;
@@ -11,7 +11,7 @@ export interface IUser {
 }
 
 export interface IChainContext {
-    spaces: string[];
+    spaces: ISpace[];
     rents: string[];
     user: IUser;
 }

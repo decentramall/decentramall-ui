@@ -13,7 +13,7 @@ export default function Space() {
         if (chainContext.user.space !== undefined) {
             return <p>{JSON.stringify(chainContext.user.space)}</p>
         } else {
-            return chainContext.spaces.map((space) => <p>{space}</p>)
+            return chainContext.spaces.map((space) => <p key={space.tokenId}>{JSON.stringify(space)}</p>)
         }
     }
     return (
