@@ -7,21 +7,42 @@ import theme from '../src/theme'
 import { ethers } from "ethers";
 // TODO: to change
 import DecentramallTokenJSON from '../../smart-contracts/build/contracts/DecentramallToken.json';
-import { DecentramallTokenInstance } from '../../smart-contracts/types/truffle-contracts/index';
+import EstateAgentJSON from '../../smart-contracts/build/contracts/EstateAgent.json';
+import {
+    DecentramallTokenInstance,
+    EstateAgentInstance
+} from '../../smart-contracts/types/truffle-contracts/index';
 
 
 export interface IChainContext {
     spaces: string[];
     rents: string[];
+    user: {
+        space: {
+            buyer: string;
+            price: string;
+            tokenId: string;
+        } | undefined;
+        rent: string;
+    }
 }
 export const ChainContext = React.createContext<IChainContext>({
     spaces: [],
-    rents: []
+    rents: [],
+    user: {
+        space: undefined,
+        rent: ''
+    }
 });
 
 export default function MyApp(props: AppProps) {
     const [spaces, setSpaces] = useState<string[]>([]);
     const [rents, setRents] = useState<string[]>([]);
+    const [user, setUser] = useState<{ space: {
+        buyer: string;
+        price: string;
+        tokenId: string;
+    } | undefined, rent: string }>({ space: '', rent: '' });
     const { Component, pageProps } = props
 
     React.useEffect(() => {
@@ -43,18 +64,38 @@ export default function MyApp(props: AppProps) {
             const signer = provider.getSigner();
 
             const { chainId } = await provider.getNetwork();
-            const tokenContract = new ethers.Contract(
+            const decentramallTokenInstance = new ethers.Contract(
                 DecentramallTokenJSON.networks[chainId].address,
                 DecentramallTokenJSON.abi,
                 provider,
             ) as ethers.Contract & DecentramallTokenInstance;
+            const estateAgentInstance = new ethers.Contract(
+                EstateAgentJSON.networks[chainId].address,
+                EstateAgentJSON.abi,
+                provider,
+            ) as ethers.Contract & EstateAgentInstance;
 
             // load all spaces
             // a much more efficient way, would be to load from events, for example, using TheGraph
-            const totalTokens = await tokenContract.totalSupply();
+            const totalTokens = await decentramallTokenInstance.totalSupply();
+            if (totalTokens.toNumber() > 0) {
+                const ifaceEstateAgent = new ethers.utils.Interface(EstateAgentJSON.abi);
+                const myBoughtSpaces = await provider.getLogs(
+                    estateAgentInstance.filters.BuyToken(await signer.getAddress(), null, null)
+                );
+                if (myBoughtSpaces.length > 0) {
+                    const log = ifaceEstateAgent.parseLog(myBoughtSpaces[myBoughtSpaces.length - 1]);
+                    const space = {
+                        buyer: log.args.buyer.toString(),
+                        price: log.args.price.toString(),
+                        tokenId: log.args.tokenId.toString(),
+                    }
+                    setUser({ space, rent: '' });
+                }
+            }
             const loadedSpaces = [];
             for (let t = 0; t < totalTokens.toNumber(); t += 1) {
-                loadedSpaces.push(await tokenContract.tokenByIndex(t));
+                loadedSpaces.push((await decentramallTokenInstance.tokenByIndex(t)).toString());
             }
             setSpaces(loadedSpaces);
             // TODO: load rents
@@ -75,7 +116,7 @@ export default function MyApp(props: AppProps) {
             <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
-                <ChainContext.Provider value={{ spaces, rents }}>
+                <ChainContext.Provider value={{ spaces, rents, user }}>
                     <Component {...pageProps} />
                 </ChainContext.Provider>
             </ThemeProvider>
