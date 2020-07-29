@@ -12,7 +12,7 @@ import {
     DecentramallTokenInstance,
     EstateAgentInstance
 } from '../../smart-contracts/types/truffle-contracts/index';
-import { IUser, IChainContext, ISpace } from '../src/types'
+import { IUser, IChainContext, ISpace, IRent } from '../src/types'
 
 
 export const ChainContext = React.createContext<IChainContext>({
@@ -20,14 +20,14 @@ export const ChainContext = React.createContext<IChainContext>({
     rents: [],
     user: {
         space: undefined,
-        rent: ''
+        rent: undefined,
     }
 });
 
 export default function MyApp(props: AppProps) {
     const [spaces, setSpaces] = useState<ISpace[]>([]);
-    const [rents, setRents] = useState<string[]>([]);
-    const [user, setUser] = useState<IUser>({ space: undefined, rent: '' });
+    const [rents, setRents] = useState<IRent[]>([]);
+    const [user, setUser] = useState<IUser>({ space: undefined, rent: undefined });
     const { Component, pageProps } = props
 
     React.useEffect(() => {
@@ -86,12 +86,11 @@ export default function MyApp(props: AppProps) {
                     const mappedSpace = logsEstateAgent.map((log) => mapSpace(ifaceEstateAgent.parseLog(log).args));
                     const userSpace = mappedSpace.find((s) => s.buyer === signerAddress);
                     setSpaces(mappedSpace);
-                    setUser({ space: userSpace, rent: '' });
+                    // TODO: load user rent
+                    setUser({ space: userSpace, rent: undefined });
                 }
             }
-            // TODO: load rents
         }
-
         loadWeb3();
     }, [])
 

@@ -1,10 +1,17 @@
 import { createPow } from '@textile/powergate-client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { CreateFilecoinStorageDeal } from 'slate-react-system';
 import { Button, Input, makeStyles, TextField, CircularProgress } from '@material-ui/core';
+import { ChainContext } from '../_app';
+import { ethers } from 'ethers';
+import RentalAgentJSON from '../../../smart-contracts/build/contracts/RentalAgent.json';
+import {
+    RentalAgentInstance
+} from '../../../smart-contracts/types/truffle-contracts/index';
 
 
 export default function Rent() {
+    const chianContext = useContext(ChainContext);
     const classes = useStyles();
     let PowerGate = null
 
@@ -13,7 +20,7 @@ export default function Rent() {
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
     const [url, setUrl] = useState('');
-    
+
     const [pictureDealInProgress, setPictureDealInProgress] = useState(false);
     const [jsonDealInProgress, setJSONDealInProgress] = useState(false);
 
@@ -21,15 +28,13 @@ export default function Rent() {
     useEffect(() => {
         PowerGate = createPow({ host: process.env.NEXT_PUBLIC_POWERGATE_URL })
         PowerGate.setToken(process.env.NEXT_PUBLIC_FFS_TOKEN)
-        // TODO: chack if user has rented space
     });
 
     const handleSubmitNewRent = async () => {
         // TODO: verify fields
-        // TODO: upload image first
-        // TODO: wait for image cid, generated json and upload it
-        // TODO: wait for json cid, and add it to the tokenURI
+        // upload image first
         const pictureCid = await _pictureStorageDeal();
+        // wait for image cid, generated json and upload it
         const jsonRent = {
             title,
             description,
@@ -54,6 +59,25 @@ export default function Rent() {
                 cancel();
             }
         }, jobId);
+        // wait for json cid
+        // TODO: remove replication
+        const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+        const signer = provider.getSigner();
+        const signerAddress = await signer.getAddress();
+        
+        const { chainId } = await provider.getNetwork();
+        const rentalAgentInstance = new ethers.Contract(
+            RentalAgentJSON.networks[chainId].address,
+            RentalAgentJSON.abi,
+            provider,
+        ) as ethers.Contract & RentalAgentInstance;
+        chianContext.spaces.forEach((s) => rentalAgentInstance.spaceInfo(s.tokenId).then(console.log));
+        // choose one SPACE without rent
+        const notRented = chianContext.spaces.filter(async (s) => ((await rentalAgentInstance.spaceInfo(s.tokenId)) as any).rentedTo === '0x0000000000000000000000000000000000000000');
+
+        // TODO: add tokenURI
+        const rentalAgentInstanceWithSigner = rentalAgentInstance.connect(signer);
+        await rentalAgentInstanceWithSigner.rent(notRented[0].tokenId/**, cid */);
     }
 
     const _getId = async () => {
@@ -118,22 +142,30 @@ export default function Rent() {
         }
     }
 
-    // TODO: if valid rent space get
+    // chack if user does not have rented space
+    if (chianContext.user.rent === undefined) {
+        return (
+            <>
+                <form className={classes.root} noValidate autoComplete="off">
+                    <TextField label="Title" name="title" value={title} onChange={handleChangeInput} />
+                    <TextField label="Description" name="description" value={description} onChange={handleChangeInput} />
+                    <TextField label="Category" name="category" value={category} onChange={handleChangeInput} />
+                    <TextField label="URL" name="url" value={url} onChange={handleChangeInput} />
+                    <Input type="file" onChange={selectImage} />
+                </form>
+                <br />
+                {/* <CreateFilecoinStorageDeal onSubmit={this._handleSubmit} /> */}
+                <Button onClick={handleSubmitNewRent}>Submit</Button>
+                {/* <Button onClick={_getId}>Get</Button> */}
+                {(pictureDealInProgress || jsonDealInProgress) && <CircularProgress />}
+            </>
+        )
+    }
+
     return (
-        <>
-            <form className={classes.root} noValidate autoComplete="off">
-                <TextField label="Title" name="title" value={title} onChange={handleChangeInput} />
-                <TextField label="Description" name="description" value={description} onChange={handleChangeInput} />
-                <TextField label="Category" name="category" value={category} onChange={handleChangeInput} />
-                <TextField label="URL" name="url" value={url} onChange={handleChangeInput} />
-                <Input type="file" onChange={selectImage} />
-            </form>
-            <br />
-            {/* <CreateFilecoinStorageDeal onSubmit={this._handleSubmit} /> */}
-            <Button onClick={handleSubmitNewRent}>Submit</Button>
-            {/* <Button onClick={_getId}>Get</Button> */}
-            {(pictureDealInProgress || jsonDealInProgress) && <CircularProgress />}
-        </>
+        <p>
+            {JSON.stringify(chianContext.user.rent)}
+        </p>
     )
 }
 

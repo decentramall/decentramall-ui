@@ -15,11 +15,11 @@ export interface IRent {
 
 export interface IUser {
     space: ISpace | undefined;
-    rent: string;
+    rent: IRent | undefined;
 }
 
 export interface IChainContext {
     spaces: ISpace[];
-    rents: string[];
+    rents: IRent[];
     user: IUser;
 }
