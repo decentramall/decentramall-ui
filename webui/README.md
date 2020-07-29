@@ -20,7 +20,13 @@ yarn install
 yarn dev
 ```
 
-Requires powergate running. See [here](https://docs.textile.io/powergate/localnet/#setup). Everytime you start a the local testnet, it starts with clean spaces, so you need to create an FFS. Run `pow ffs create` (see [here](https://docs.textile.io/powergate/#command-line-interface) how to install *pow cli*) anywhere on your machine and copy the token to *.env.local* file to *NEXT_PUBLIC_FFS_TOKEN* variable.
+Requires `.env.local`, deployed smart-contracts and powergate instance. Only then run the webui.
+
+To fill `.env.local` look at `.env.local.example` (parameters are explained below).
+
+To deploy the smart-contracts in a localnet, go to *smart-contracts* folder and run `yarn devenv`. It should start a ganache instance and deploy the smart-contracts. Please, run `yarn generate-types` as we use automatically generated types for easier integration.
+
+To start a local powergate, see [here](https://docs.textile.io/powergate/localnet/#setup). Everytime you start a the local testnet, it starts with clean spaces, so you need to create an FFS. Run `pow ffs create` (see [here](https://docs.textile.io/powergate/#command-line-interface) how to install *pow cli*) anywhere on your machine and copy the token to *.env.local* file to *NEXT_PUBLIC_FFS_TOKEN* variable.
 
 ### Run tests
 
