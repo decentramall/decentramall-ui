@@ -3,10 +3,12 @@ import React, { useEffect, useState, useContext } from 'react'
 import { CreateFilecoinStorageDeal } from 'slate-react-system';
 import { Button, Input, makeStyles, TextField, CircularProgress } from '@material-ui/core';
 import { ChainContext } from '../_app';
-import { ethers } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 import RentalAgentJSON from '../../../smart-contracts/build/contracts/RentalAgent.json';
+import EstateAgentJSON from '../../../smart-contracts/build/contracts/EstateAgent.json';
+import DecentramallTokenJSON from '../../../smart-contracts/build/contracts/DecentramallToken.json';
 import {
-    RentalAgentInstance
+    RentalAgentInstance, EstateAgentInstance, DecentramallTokenInstance
 } from '../../../smart-contracts/types/truffle-contracts/index';
 
 
@@ -64,20 +66,33 @@ export default function Rent() {
         const provider = new ethers.providers.Web3Provider((window as any).ethereum);
         const signer = provider.getSigner();
         const signerAddress = await signer.getAddress();
-        
+
         const { chainId } = await provider.getNetwork();
         const rentalAgentInstance = new ethers.Contract(
             RentalAgentJSON.networks[chainId].address,
             RentalAgentJSON.abi,
             provider,
         ) as ethers.Contract & RentalAgentInstance;
+        const estateAgentInstance = new ethers.Contract(
+            EstateAgentJSON.networks[chainId].address,
+            EstateAgentJSON.abi,
+            provider,
+        ) as ethers.Contract & EstateAgentInstance;
+        const decentramallTokenInstance = new ethers.Contract(
+            DecentramallTokenJSON.networks[chainId].address,
+            DecentramallTokenJSON.abi,
+            provider,
+        ) as ethers.Contract & DecentramallTokenInstance;
         chianContext.spaces.forEach((s) => rentalAgentInstance.spaceInfo(s.tokenId).then(console.log));
         // choose one SPACE without rent
         const notRented = chianContext.spaces.filter(async (s) => ((await rentalAgentInstance.spaceInfo(s.tokenId)) as any).rentedTo === '0x0000000000000000000000000000000000000000');
 
+        const totalSupply = BigNumber.from((await decentramallTokenInstance.totalSupply()).toString());
+
+        const rentPrice = BigNumber.from((await estateAgentInstance.price(totalSupply.add(1).toString())).toString()).mul('10000000000000000').div('10').toString();
         // TODO: add tokenURI
-        const rentalAgentInstanceWithSigner = rentalAgentInstance.connect(signer);
-        await rentalAgentInstanceWithSigner.rent(notRented[0].tokenId/**, cid */);
+        const rentalAgentInstanceWithSigner = rentalAgentInstance.connect(signer) as ethers.Contract & RentalAgentInstance;
+        await rentalAgentInstanceWithSigner.rent(notRented[0].tokenId, cid, { from: signerAddress, value: rentPrice });
     }
 
     const _getId = async () => {
