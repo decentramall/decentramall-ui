@@ -6,35 +6,35 @@
 - Formatting with [Prettier](https://prettier.io/)
 - Linting, typechecking and formatting on by default using [`husky`](https://github.com/typicode/husky) for commit hooks
 - Testing with [Jest](https://jestjs.io/) and [`react-testing-library`](https://testing-library.com/docs/react-testing-library/intro)
-## How to use
-
-Install the dependencies
+## Installation
 
 ```bash
-yarn install
+yarn
 ```
 
-### Run in development
-
-```bash
-yarn dev
-```
+## Usage
 
 Requires `.env.local`, deployed smart-contracts and powergate instance. Only then run the webui.
 
 To fill `.env.local` look at `.env.local.example` (parameters are explained below).
 
-To deploy the smart-contracts in a localnet, go to *smart-contracts* folder and run `yarn devenv`. It should start a ganache instance and deploy the smart-contracts. Please, run `yarn generate-types` as we use automatically generated types for easier integration.
+To deploy the smart-contracts in a localnet, see *smart-contracts* folder README.
 
 To start a local powergate, see [here](https://docs.textile.io/powergate/localnet/#setup). Everytime you start a the local testnet, it starts with clean spaces, so you need to create an FFS. Run `pow ffs create` (see [here](https://docs.textile.io/powergate/#command-line-interface) how to install *pow cli*) anywhere on your machine and copy the token to *.env.local* file to *NEXT_PUBLIC_FFS_TOKEN* variable.
 
-### Run tests
+```bash
+yarn dev
+```
+
+See [here](https://metamask.zendesk.com/hc/en-us/articles/360015489331-Importing-an-Account) how to import accounts into metamask and [here](https://ethereum.stackexchange.com/a/67115) how to reset if necessary.
+
+## Tests
 
 ```bash
 yarn test
 ```
 
-### Build assets
+## Build
 
 Build static assets in `out/` directory to serve
 
