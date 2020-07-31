@@ -33,6 +33,8 @@ export default function Rent() {
     });
 
     const handleSubmitNewRent = async () => {
+
+        console.log("submit")
         // TODO: verify fields
         // upload image first
         const pictureCid = await _pictureStorageDeal();
@@ -162,10 +164,10 @@ export default function Rent() {
         return (
             <>
                 <form className={classes.root} noValidate autoComplete="off">
-                    <TextField label="Title" name="title" value={title} onChange={handleChangeInput} />
-                    <TextField label="Description" name="description" value={description} onChange={handleChangeInput} />
-                    <TextField label="Category" name="category" value={category} onChange={handleChangeInput} />
-                    <TextField label="URL" name="url" value={url} onChange={handleChangeInput} />
+                    <TextField label="Title" name="title" value={title} required onChange={handleChangeInput} error={title === ""}/>
+                    <TextField label="Description" name="description" value={description} required onChange={handleChangeInput} error={description === ""}/>
+                    <TextField label="Category" name="category" value={category} required onChange={handleChangeInput} error={category === ""}/>
+                    <TextField label="URL" name="url" value={url} required onChange={handleChangeInput} error={url === ""}/>
                     <Input type="file" onChange={selectImage} />
                 </form>
                 <br />
