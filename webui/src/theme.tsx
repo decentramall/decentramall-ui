@@ -25,6 +25,13 @@ const theme = createMuiTheme({
     // },
     // divider: 'rgba(255, 255, 255, 0.12)',
   },
+  typography: {
+    // "fontFamily": `"Ubuntu", "Asap", "Roboto", "Helvetica", "Arial", sans-serif`,
+    "fontSize": 14,
+    "fontWeightLight": 300,
+    "fontWeightRegular": 400,
+    "fontWeightMedium": 500,
+  }
 })
 
 export default theme

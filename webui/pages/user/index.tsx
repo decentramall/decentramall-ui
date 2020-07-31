@@ -11,11 +11,14 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
     paper: {
+        display:'flex',
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
-        height: 150,
-        width: 150,
+        alignItems: 'center',
+        height: '23vh',
+        width: '12vw',
+        minWidth: '10rem',
         cursor: 'pointer',
     },
     control: {
@@ -35,7 +38,7 @@ export default function Home() {
     const choices = (user: IUser) => {
         return [
             {
-                title: (user.space !== undefined ? 'See your' : 'Buy') + ' SPACE',
+                title: (user.space !== undefined ? 'View your' : 'Buy') + ' SPACE',
                 picture: 'images/navigate-icons/category.svg',
                 view: 'space',
             },
@@ -55,11 +58,11 @@ export default function Home() {
         } else {
             return <Container maxWidth="sm">
                 {/* TODO: align vertically */}
-                <Grid container justify="center" spacing={5} style={{ marginTop: '40%' }}>
+                <Grid container justify="center" spacing={5} style={{ marginTop: '40%', justifyContent: 'center', alignItems: 'center', }}>
                     {choices(chainContext.user).map((choice) => (
-                        <Grid key={choice.title} item>
+                        <Grid key={choice.title} item xs={12} md={6}>
                             <Paper className={classes.paper} onClick={(e) => openView(e, choice.view)}>
-                                <img height="95" src={choice.picture} />
+                                <img height="95" src={choice.picture} style={{margin:"2rem"}}/>
                                 <Typography variant="body1" component="p" gutterBottom>
                                     {choice.title}
                                 </Typography>
