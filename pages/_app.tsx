@@ -15,15 +15,12 @@ import {
     RentalAgentInstance,
 } from '../../smart-contracts/types/truffle-contracts/index';
 import { IUser, IChainContext, ISpace, IRent } from '../src/types'
+import { createPow } from '@textile/powergate-client'
 
 
 export const ChainContext = React.createContext<IChainContext>({
     spaces: [],
-    rents: [],
-    user: {
-        space: undefined,
-        rent: undefined,
-    },
+    user: {},
     decentramallTokenInstance: undefined,
     estateAgentInstance: undefined,
     rentalAgentInstance: undefined,
@@ -31,8 +28,7 @@ export const ChainContext = React.createContext<IChainContext>({
 
 export default function MyApp(props: AppProps) {
     const [spaces, setSpaces] = useState<ISpace[]>([]);
-    const [rents, setRents] = useState<IRent[]>([]);
-    const [user, setUser] = useState<IUser>({ space: undefined, rent: undefined });
+    const [user, setUser] = useState<IUser>({});
     const [decentramallTokenInstance, setDecentramallToken] = useState<ethers.Contract & DecentramallTokenInstance | undefined>();
     const [estateAgentInstance, setEstateAgent] = useState<ethers.Contract & EstateAgentInstance | undefined>();
     const [rentalAgentInstance, setRentalAgent] = useState<ethers.Contract & RentalAgentInstance | undefined>();
@@ -78,16 +74,26 @@ export default function MyApp(props: AppProps) {
                 provider,
             ) as ethers.Contract & RentalAgentInstance;
             setRentalAgent(rentalAgentInstance);
-            
+
             // load all spaces
             // a much more efficient way, would be to load from events, for example, using TheGraph
             const totalTokens = await decentramallTokenInstance.totalSupply();
             if (totalTokens.toNumber() > 0) {
-                const mapSpace = (logArgs: any) => {
+                const PowerGate = createPow({ host: process.env.NEXT_PUBLIC_POWERGATE_URL })
+                PowerGate.setToken(process.env.NEXT_PUBLIC_FFS_TOKEN)
+
+                const mapSpace = async (logArgs: any) => {
+                    const tokenId = logArgs.tokenId.toString();
+                    const rentCid = await decentramallTokenInstance.tokenURI(tokenId);
+                    let rent: IRent;
+                    if (rentCid.length > 0) {
+                        rent = JSON.parse(new TextDecoder("utf-8").decode((await PowerGate.ffs.get(rentCid))));
+                    }
                     return {
                         buyer: logArgs.buyer.toString(),
                         price: logArgs.price.toString(),
-                        tokenId: logArgs.tokenId.toString(),
+                        tokenId,
+                        rent
                     }
                 }
                 const ifaceEstateAgent = new ethers.utils.Interface(EstateAgentJSON.abi);
@@ -101,11 +107,15 @@ export default function MyApp(props: AppProps) {
                 });
 
                 if (logsEstateAgent.length > 0) {
-                    const mappedSpace = logsEstateAgent.map((log) => mapSpace(ifaceEstateAgent.parseLog(log).args));
+                    const mappedSpace = [];
+                    for (let x = 0; x < logsEstateAgent.length; x += 1) {
+                        mappedSpace.push((await mapSpace(ifaceEstateAgent.parseLog(logsEstateAgent[x]).args)));
+                    }
                     const userSpace = mappedSpace.find((s) => s.buyer === signerAddress);
                     setSpaces(mappedSpace);
+                    console.log('mappedSpace', mappedSpace);
                     // TODO: load user rent
-                    setUser({ space: userSpace, rent: undefined });
+                    setUser({ space: userSpace });
                 }
             }
         }
@@ -124,7 +134,7 @@ export default function MyApp(props: AppProps) {
             <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
-                <ChainContext.Provider value={{ spaces, rents, user, decentramallTokenInstance, estateAgentInstance, rentalAgentInstance }}>
+                <ChainContext.Provider value={{ spaces, user, decentramallTokenInstance, estateAgentInstance, rentalAgentInstance }}>
                     <Component {...pageProps} />
                 </ChainContext.Provider>
             </ThemeProvider>
