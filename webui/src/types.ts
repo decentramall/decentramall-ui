@@ -5,12 +5,6 @@ import {
     RentalAgentInstance,
 } from '../../smart-contracts/types/truffle-contracts/index';
 
-export interface ISpace {
-    buyer: string;
-    price: string;
-    tokenId: string;
-};
-
 export interface IRent {
     title: string;
     description: string;
@@ -19,14 +13,20 @@ export interface IRent {
     url: string;
 };
 
+export interface ISpace {
+    buyer: string;
+    price: string;
+    tokenId: string;
+    rent?: IRent;
+};
+
 export interface IUser {
-    space: ISpace | undefined;
-    rent: IRent | undefined;
+    space?: ISpace;
+    rent?: IRent;
 }
 
 export interface IChainContext {
     spaces: ISpace[];
-    rents: IRent[];
     user: IUser;
     decentramallTokenInstance: ethers.Contract & DecentramallTokenInstance | undefined;
     estateAgentInstance: ethers.Contract & EstateAgentInstance | undefined;
