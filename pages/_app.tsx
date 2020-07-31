@@ -8,9 +8,11 @@ import { ethers } from "ethers";
 // TODO: to change
 import DecentramallTokenJSON from '../../smart-contracts/build/contracts/DecentramallToken.json';
 import EstateAgentJSON from '../../smart-contracts/build/contracts/EstateAgent.json';
+import RentalAgentJSON from '../../smart-contracts/build/contracts/RentalAgent.json';
 import {
     DecentramallTokenInstance,
-    EstateAgentInstance
+    EstateAgentInstance,
+    RentalAgentInstance,
 } from '../../smart-contracts/types/truffle-contracts/index';
 import { IUser, IChainContext, ISpace, IRent } from '../src/types'
 
@@ -21,13 +23,19 @@ export const ChainContext = React.createContext<IChainContext>({
     user: {
         space: undefined,
         rent: undefined,
-    }
+    },
+    decentramallTokenInstance: undefined,
+    estateAgentInstance: undefined,
+    rentalAgentInstance: undefined,
 });
 
 export default function MyApp(props: AppProps) {
     const [spaces, setSpaces] = useState<ISpace[]>([]);
     const [rents, setRents] = useState<IRent[]>([]);
     const [user, setUser] = useState<IUser>({ space: undefined, rent: undefined });
+    const [decentramallTokenInstance, setDecentramallToken] = useState<ethers.Contract & DecentramallTokenInstance | undefined>();
+    const [estateAgentInstance, setEstateAgent] = useState<ethers.Contract & EstateAgentInstance | undefined>();
+    const [rentalAgentInstance, setRentalAgent] = useState<ethers.Contract & RentalAgentInstance | undefined>();
     const { Component, pageProps } = props
 
     React.useEffect(() => {
@@ -55,12 +63,22 @@ export default function MyApp(props: AppProps) {
                 DecentramallTokenJSON.abi,
                 provider,
             ) as ethers.Contract & DecentramallTokenInstance;
-            // const estateAgentInstance = new ethers.Contract(
-            //     EstateAgentJSON.networks[chainId].address,
-            //     EstateAgentJSON.abi,
-            //     provider,
-            // ) as ethers.Contract & EstateAgentInstance;
+            setDecentramallToken(decentramallTokenInstance);
 
+            const estateAgentInstance = new ethers.Contract(
+                EstateAgentJSON.networks[chainId].address,
+                EstateAgentJSON.abi,
+                provider,
+            ) as ethers.Contract & EstateAgentInstance;
+            setEstateAgent(estateAgentInstance);
+
+            const rentalAgentInstance = new ethers.Contract(
+                RentalAgentJSON.networks[chainId].address,
+                RentalAgentJSON.abi,
+                provider,
+            ) as ethers.Contract & RentalAgentInstance;
+            setRentalAgent(rentalAgentInstance);
+            
             // load all spaces
             // a much more efficient way, would be to load from events, for example, using TheGraph
             const totalTokens = await decentramallTokenInstance.totalSupply();
@@ -106,7 +124,7 @@ export default function MyApp(props: AppProps) {
             <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
-                <ChainContext.Provider value={{ spaces, rents, user }}>
+                <ChainContext.Provider value={{ spaces, rents, user, decentramallTokenInstance, estateAgentInstance, rentalAgentInstance }}>
                     <Component {...pageProps} />
                 </ChainContext.Provider>
             </ThemeProvider>

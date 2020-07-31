@@ -7,8 +7,6 @@ import { IChainContext } from '../../src/types'
 import { Button } from '@material-ui/core'
 import { ethers, BigNumber } from 'ethers'
 import { DecentramallTokenInstance, EstateAgentInstance } from '../../../smart-contracts/types/truffle-contracts';
-import DecentramallTokenJSON from '../../../smart-contracts/build/contracts/DecentramallToken.json';
-import EstateAgentJSON from '../../../smart-contracts/build/contracts/EstateAgent.json';
 
 
 export default function Space() {
@@ -26,17 +24,7 @@ export default function Space() {
             signer = provider.getSigner();
             signerAddress = await signer.getAddress();
 
-            const { chainId } = await provider.getNetwork();
-            decentramallTokenInstance = new ethers.Contract(
-                DecentramallTokenJSON.networks[chainId].address,
-                DecentramallTokenJSON.abi,
-                provider,
-            ) as ethers.Contract & DecentramallTokenInstance;
-            estateAgentInstance = new ethers.Contract(
-                EstateAgentJSON.networks[chainId].address,
-                EstateAgentJSON.abi,
-                provider,
-            ) as ethers.Contract & EstateAgentInstance;
+            // const { chainId } = await provider.getNetwork();
             const nextT = await decentramallTokenInstance.totalSupply();
             const currentNextPrice = BigNumber.from((await estateAgentInstance.price(nextT.toNumber() + 1)).toString()).mul(BigNumber.from('10000000000000000')).toString();
             setNextPrice(currentNextPrice);
@@ -50,6 +38,9 @@ export default function Space() {
     }
 
     const renderContext = (chainContext: IChainContext) => {
+        decentramallTokenInstance = chainContext.decentramallTokenInstance;
+        estateAgentInstance = chainContext.estateAgentInstance;
+
         if (chainContext.user.space !== undefined) {
             var data = JSON.parse(JSON.stringify(chainContext.user.space));
             return <Box display="flex" flexDirection="column" margin="auto" justifyContent="center" alignItems="center">
