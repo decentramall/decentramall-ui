@@ -10,10 +10,11 @@ import DecentramallTokenJSON from '../../../smart-contracts/build/contracts/Dece
 import {
     RentalAgentInstance, EstateAgentInstance, DecentramallTokenInstance
 } from '../../../smart-contracts/types/truffle-contracts/index';
+import { IChainContext } from '../../src/types';
 
 
 export default function Rent() {
-    const chianContext = useContext(ChainContext);
+    const chainContext = useContext(ChainContext);
     const classes = useStyles();
     let PowerGate = null
 
@@ -26,6 +27,9 @@ export default function Rent() {
     const [pictureDealInProgress, setPictureDealInProgress] = useState(false);
     const [jsonDealInProgress, setJSONDealInProgress] = useState(false);
 
+    const [decentramallTokenInstance, setDecentramallToken] = useState<ethers.Contract & DecentramallTokenInstance | undefined>();
+    const [estateAgentInstance, setEstateAgent] = useState<ethers.Contract & EstateAgentInstance | undefined>();
+    const [rentalAgentInstance, setRentalAgent] = useState<ethers.Contract & RentalAgentInstance | undefined>();
 
     useEffect(() => {
         PowerGate = createPow({ host: process.env.NEXT_PUBLIC_POWERGATE_URL })
@@ -33,8 +37,6 @@ export default function Rent() {
     });
 
     const handleSubmitNewRent = async () => {
-
-        console.log("submit")
         // TODO: verify fields
         // upload image first
         const pictureCid = await _pictureStorageDeal();
@@ -70,24 +72,9 @@ export default function Rent() {
         const signerAddress = await signer.getAddress();
 
         const { chainId } = await provider.getNetwork();
-        const rentalAgentInstance = new ethers.Contract(
-            RentalAgentJSON.networks[chainId].address,
-            RentalAgentJSON.abi,
-            provider,
-        ) as ethers.Contract & RentalAgentInstance;
-        const estateAgentInstance = new ethers.Contract(
-            EstateAgentJSON.networks[chainId].address,
-            EstateAgentJSON.abi,
-            provider,
-        ) as ethers.Contract & EstateAgentInstance;
-        const decentramallTokenInstance = new ethers.Contract(
-            DecentramallTokenJSON.networks[chainId].address,
-            DecentramallTokenJSON.abi,
-            provider,
-        ) as ethers.Contract & DecentramallTokenInstance;
-        chianContext.spaces.forEach((s) => rentalAgentInstance.spaceInfo(s.tokenId).then(console.log));
+        chainContext.spaces.forEach((s) => rentalAgentInstance.spaceInfo(s.tokenId).then(console.log));
         // choose one SPACE without rent
-        const notRented = chianContext.spaces.filter(async (s) => ((await rentalAgentInstance.spaceInfo(s.tokenId)) as any).rentedTo === '0x0000000000000000000000000000000000000000');
+        const notRented = chainContext.spaces.filter(async (s) => ((await rentalAgentInstance.spaceInfo(s.tokenId)) as any).rentedTo === '0x0000000000000000000000000000000000000000');
 
         const totalSupply = BigNumber.from((await decentramallTokenInstance.totalSupply()).toString());
 
@@ -159,30 +146,40 @@ export default function Rent() {
         }
     }
 
-    // chack if user does not have rented space
-    if (chianContext.user.rent === undefined) {
-        return (
-            <>
-                <form className={classes.root} noValidate autoComplete="off">
-                    <TextField label="Title" name="title" value={title} required onChange={handleChangeInput} error={title === ""}/>
-                    <TextField label="Description" name="description" value={description} required onChange={handleChangeInput} error={description === ""}/>
-                    <TextField label="Category" name="category" value={category} required onChange={handleChangeInput} error={category === ""}/>
-                    <TextField label="URL" name="url" value={url} required onChange={handleChangeInput} error={url === ""}/>
-                    <Input type="file" onChange={selectImage} />
-                </form>
-                <br />
-                {/* <CreateFilecoinStorageDeal onSubmit={this._handleSubmit} /> */}
-                <Button onClick={handleSubmitNewRent}>Submit</Button>
-                {/* <Button onClick={_getId}>Get</Button> */}
-                {(pictureDealInProgress || jsonDealInProgress) && <CircularProgress />}
-            </>
-        )
+    const renderContext = (chainContext: IChainContext) => {
+        setDecentramallToken(chainContext.decentramallTokenInstance);
+        setEstateAgent(chainContext.estateAgentInstance);
+        setRentalAgent(chainContext.rentalAgentInstance);
+
+        // chack if user does not have rented space
+        if (chainContext.user.rent === undefined) {
+            return (
+                <>
+                    <form className={classes.root} noValidate autoComplete="off">
+                        <TextField label="Title" name="title" value={title} required onChange={handleChangeInput} error={title === ""}/>
+                        <TextField label="Description" name="description" value={description} required onChange={handleChangeInput} error={description === ""}/>
+                        <TextField label="Category" name="category" value={category} required onChange={handleChangeInput} error={category === ""}/>
+                        <TextField label="URL" name="url" value={url} required onChange={handleChangeInput} error={url === ""}/>
+                        <Input type="file" onChange={selectImage} />
+                    </form>
+                    <br />
+                    {/* <CreateFilecoinStorageDeal onSubmit={this._handleSubmit} /> */}
+                    <Button onClick={handleSubmitNewRent}>Submit</Button>
+                    {/* <Button onClick={_getId}>Get</Button> */}
+                    {(pictureDealInProgress || jsonDealInProgress) && <CircularProgress />}
+                </>
+            )
+        } else {  
+            <p>
+                {JSON.stringify(chainContext.user.rent)}
+            </p>
+        }
     }
 
     return (
-        <p>
-            {JSON.stringify(chianContext.user.rent)}
-        </p>
+        <ChainContext.Consumer>
+                {(chainContext) => renderContext(chainContext)}
+        </ChainContext.Consumer>
     )
 }
 
