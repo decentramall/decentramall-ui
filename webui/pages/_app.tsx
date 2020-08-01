@@ -28,7 +28,8 @@ export const ChainContext = React.createContext<IChainContext>({
 
 export default function MyApp(props: AppProps) {
     const [spaces, setSpaces] = useState<ISpace[]>([]);
-    const [user, setUser] = useState<IUser>({});
+    const [userRent, setUserRent] = useState<IRent>();
+    const [userSpace, setUserSpace] = useState<ISpace>();
     const [decentramallTokenInstance, setDecentramallToken] = useState<ethers.Contract & DecentramallTokenInstance | undefined>();
     const [estateAgentInstance, setEstateAgent] = useState<ethers.Contract & EstateAgentInstance | undefined>();
     const [rentalAgentInstance, setRentalAgent] = useState<ethers.Contract & RentalAgentInstance | undefined>();
@@ -96,6 +97,10 @@ export default function MyApp(props: AppProps) {
                             rentalEarned: spaceInfo[2].toString(),
                             expiryBlock: spaceInfo[3].toString(),
                         }
+                        // add user rent here
+                        if (spaceInfo[1].toString() === signerAddress) {
+                            setUserRent(rent);
+                        }
                     }
                     return {
                         buyer: logArgs.buyer.toString(),
@@ -122,8 +127,7 @@ export default function MyApp(props: AppProps) {
                     const userSpace = mappedSpace.find((s) => s.buyer === signerAddress);
                     setSpaces(mappedSpace);
                     console.log('mappedSpace', mappedSpace);
-                    // TODO: load user rent
-                    setUser({ space: userSpace });
+                    setUserSpace(userSpace);
                 }
             }
         }
@@ -142,7 +146,7 @@ export default function MyApp(props: AppProps) {
             <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
-                <ChainContext.Provider value={{ spaces, user, decentramallTokenInstance, estateAgentInstance, rentalAgentInstance }}>
+                <ChainContext.Provider value={{ spaces, user: { space: userSpace, rent: userRent }, decentramallTokenInstance, estateAgentInstance, rentalAgentInstance }}>
                     <Component {...pageProps} />
                 </ChainContext.Provider>
             </ThemeProvider>
