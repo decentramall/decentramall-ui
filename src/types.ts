@@ -25,6 +25,7 @@ export interface ISpace {
     rent?: IRent;
 };
 
+// each space has only one rent, but a user, can have a space (rented or not) and can be renting a space to someone else
 export interface IUser {
     space?: ISpace;
     rent?: IRent;
