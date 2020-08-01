@@ -14,7 +14,7 @@ import {
     EstateAgentInstance,
     RentalAgentInstance,
 } from '../../smart-contracts/types/truffle-contracts/index';
-import { IUser, IChainContext, ISpace, IRent } from '../src/types'
+import { IChainContext, ISpace, IRent } from '../src/types'
 import { createPow } from '@textile/powergate-client'
 
 
@@ -28,6 +28,7 @@ export const ChainContext = React.createContext<IChainContext>({
 
 export default function MyApp(props: AppProps) {
     const [spaces, setSpaces] = useState<ISpace[]>([]);
+    const [signer, setSigner] = useState<ethers.Signer>();
     const [userRent, setUserRent] = useState<IRent>();
     const [userSpace, setUserSpace] = useState<ISpace>();
     const [decentramallTokenInstance, setDecentramallToken] = useState<ethers.Contract & DecentramallTokenInstance | undefined>();
@@ -43,7 +44,7 @@ export default function MyApp(props: AppProps) {
         }
 
         const loadWeb3 = async () => {
-            await (window as any).ethereum.enable();
+            await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
             // A Web3Provider wraps a standard Web3 provider, which is
             // what Metamask injects as window.ethereum into each page
             const provider = new ethers.providers.Web3Provider((window as any).ethereum);
@@ -51,8 +52,9 @@ export default function MyApp(props: AppProps) {
             // The Metamask plugin also allows signing transactions to
             // send ether and pay to change state within the blockchain.
             // For this, we need the account signer...
-            const signer = provider.getSigner();
-            const signerAddress = await signer.getAddress();
+            const currentSigner = provider.getSigner();
+            const signerAddress = await currentSigner.getAddress();
+            setSigner(currentSigner);
 
             const { chainId } = await provider.getNetwork();
             const decentramallTokenInstance = new ethers.Contract(
@@ -146,7 +148,7 @@ export default function MyApp(props: AppProps) {
             <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
-                <ChainContext.Provider value={{ spaces, user: { space: userSpace, rent: userRent }, decentramallTokenInstance, estateAgentInstance, rentalAgentInstance }}>
+                <ChainContext.Provider value={{ spaces, user: { space: userSpace, rent: userRent, signer }, decentramallTokenInstance, estateAgentInstance, rentalAgentInstance }}>
                     <Component {...pageProps} />
                 </ChainContext.Provider>
             </ThemeProvider>
