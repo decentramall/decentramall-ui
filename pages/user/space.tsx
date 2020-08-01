@@ -10,6 +10,7 @@ import { DecentramallTokenInstance, EstateAgentInstance } from '../../../smart-c
 
 
 export default function Space() {
+    const chainContext = useContext(ChainContext);
     const [nextPrice, setNextPrice] = useState<string>('0');
     let decentramallTokenInstance: ethers.Contract & DecentramallTokenInstance;
     let estateAgentInstance: ethers.Contract & EstateAgentInstance;
@@ -29,6 +30,7 @@ export default function Space() {
             const currentNextPrice = BigNumber.from((await estateAgentInstance.price(nextT.toNumber() + 1)).toString()).mul(BigNumber.from('10000000000000000')).toString();
             setNextPrice(currentNextPrice);
         }
+        console.log(chainContext.user)
         loadNextPrice();
     });
 
@@ -72,14 +74,14 @@ export default function Space() {
                     {chainContext.user.space.tokenId}
                     </Box>
                 </Box>
-                <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+{/*                <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
                     <Box fontWeight="bold" marginRight="1rem">
                     Space status:
                     </Box>
                     <Box fontWeight="regular">
                     {chainContext.user.space.rent !== undefined ? "Rented" : "Available for rent"}
                     </Box>
-                </Box>
+                </Box>*/}
             </Typography>
         </Box>;
         } else {
@@ -93,6 +95,74 @@ export default function Space() {
             </Box>;
         }
     }
+
+    const renderContextStatus = (chainContext: IChainContext) => {
+        if (chainContext.user.space.rent !== undefined) {
+            return <Box display="flex" flexDirection="column" margin="auto" justifyContent="center" alignItems="center">
+            <Typography component="div" gutterBottom style={{marginTop: '4rem', textAlign: 'center'}}>
+                <Box fontWeight="lighter" fontSize="2rem" marginBottom="3rem" textAlign="left">
+                Space status: rented
+                </Box>
+                <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                    <Box fontWeight="bold" marginRight="1rem">
+                    Rented to: 
+                    </Box>
+                    <Box fontWeight="regular">
+                    {chainContext.user.space.rent.rentedTo}
+                    </Box>
+                </Box>
+                <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                    <Box fontWeight="bold" marginRight="1rem">
+                    Rental earned:
+                    </Box>
+                    <Box fontWeight="regular">
+                    {chainContext.user.space.rent.rentalEarned}
+                    </Box>
+                </Box>
+                <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                    <Box fontWeight="bold" marginRight="1rem">
+                    Store's name:
+                    </Box>
+                    <Box fontWeight="regular">
+                    {chainContext.user.space.rent.title}
+                    </Box>
+                </Box>
+                <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                    <Box fontWeight="bold" marginRight="1rem">
+                    Category:
+                    </Box>
+                    <Box fontWeight="regular">
+                    {chainContext.user.space.rent.category}
+                    </Box>
+                </Box>
+                <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                    <Box fontWeight="bold" marginRight="1rem">
+                    Description:
+                    </Box>
+                    <Box fontWeight="regular">
+                    {chainContext.user.space.rent.description}
+                    </Box>
+                </Box>
+                <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                    <Box fontWeight="bold" marginRight="1rem">
+                    URL:
+                    </Box>
+                    <Box fontWeight="regular">
+                    {chainContext.user.space.rent.url}
+                    </Box>
+                </Box>
+            </Typography>
+        </Box>;
+        } else {
+            return <Box display="flex" flexDirection="column" margin="auto" justifyContent="center" alignItems="center">
+                <Typography variant="h5" gutterBottom style={{marginTop: '4rem', textAlign: 'left'}}>
+                    <Box fontWeight="lighter" fontSize="2rem" marginBottom="3rem" textAlign="left">
+                    Space status: available for rent
+                    </Box>
+                </Typography>
+            </Box>;
+        }
+    }
     return (
         <Box display="flex" flexDirection="column" style={{width:'85%', margin: 'auto'}}>
             <Typography variant="h4" gutterBottom style={{marginTop: '4rem', textAlign: 'center', fontWeight: 'bold'}}>
@@ -100,6 +170,9 @@ export default function Space() {
             </Typography>
             <ChainContext.Consumer>
                 {(chainContext) => renderContext(chainContext)}
+            </ChainContext.Consumer>
+            <ChainContext.Consumer>
+                {(chainContext) => renderContextStatus(chainContext)}
             </ChainContext.Consumer>
         </Box>
     )
