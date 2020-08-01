@@ -87,7 +87,15 @@ export default function MyApp(props: AppProps) {
                     const rentCid = await decentramallTokenInstance.tokenURI(tokenId);
                     let rent: IRent;
                     if (rentCid.length > 0) {
+                        const spaceInfo = await rentalAgentInstance.spaceInfo(tokenId);
                         rent = JSON.parse(new TextDecoder("utf-8").decode((await PowerGate.ffs.get(rentCid))));
+                        rent = {
+                            ...rent,
+                            // rightfulOwner: spaceInfo[0]
+                            rentedTo: spaceInfo[1].toString(),
+                            rentalEarned: spaceInfo[2].toString(),
+                            expiryBlock: spaceInfo[3].toString(),
+                        }
                     }
                     return {
                         buyer: logArgs.buyer.toString(),
