@@ -11,6 +11,11 @@ export interface IRent {
     category: string;
     logo: string;
     url: string;
+    //
+    // rightfulOwner: string;
+    rentedTo: string;
+    rentalEarned: string;
+    expiryBlock: string;
 };
 
 export interface ISpace {
