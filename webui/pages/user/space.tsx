@@ -1,7 +1,7 @@
 import Box from '@material-ui/core/Box'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { ChainContext } from '../_app'
 import { IChainContext } from '../../src/types'
 import { Button } from '@material-ui/core'
@@ -70,6 +70,14 @@ export default function Space() {
                     </Box>
                     <Box fontWeight="regular">
                     {chainContext.user.space.tokenId}
+                    </Box>
+                </Box>
+                <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                    <Box fontWeight="bold" marginRight="1rem">
+                    Space status:
+                    </Box>
+                    <Box fontWeight="regular">
+                    {chainContext.user.space.rent !== undefined ? "Rented" : "Available for rent"}
                     </Box>
                 </Box>
             </Typography>
