@@ -3,9 +3,8 @@ import { Button, Input, makeStyles, TextField, CircularProgress } from '@materia
 import { ChainContext } from '../_app';
 import { ethers, BigNumber } from 'ethers';
 import {
-    RentalAgentInstance, EstateAgentInstance, DecentramallTokenInstance
+    RentalAgentInstance
 } from '../../src/contracts/types/index';
-import { IChainContext } from '../../src/types';
 import FFSStorage from '../../src/storage';
 
 
@@ -21,10 +20,6 @@ export default function Rent() {
 
     const [dealInProgress, setDealInProgress] = useState(false);
 
-    const [decentramallTokenInstance, setDecentramallToken] = useState<ethers.Contract & DecentramallTokenInstance | undefined>();
-    const [estateAgentInstance, setEstateAgent] = useState<ethers.Contract & EstateAgentInstance | undefined>();
-    const [rentalAgentInstance, setRentalAgent] = useState<ethers.Contract & RentalAgentInstance | undefined>();
-
     const handleSubmitNewRent = async () => {
         // TODO: verify fields
         // upload image first
@@ -35,20 +30,16 @@ export default function Rent() {
 
         // wait for json cid
         // TODO: remove replication
-        const provider = new ethers.providers.Web3Provider((window as any).ethereum);
-        const signer = provider.getSigner();
-        const signerAddress = await signer.getAddress();
-
-        const { chainId } = await provider.getNetwork();
-        chainContext.spaces.forEach((s) => rentalAgentInstance.spaceInfo(s.tokenId).then(console.log));
+        chainContext.spaces.forEach((s) => chainContext.rentalAgentInstance.spaceInfo(s.tokenId).then(console.log));
         // choose one SPACE without rent
-        const notRented = chainContext.spaces.filter(async (s) => ((await rentalAgentInstance.spaceInfo(s.tokenId)) as any).rentedTo === '0x0000000000000000000000000000000000000000');
+        const notRented = chainContext.spaces.filter(async (s) => ((await chainContext.rentalAgentInstance.spaceInfo(s.tokenId)) as any).rentedTo === '0x0000000000000000000000000000000000000000');
 
-        const totalSupply = BigNumber.from((await decentramallTokenInstance.totalSupply()).toString());
+        const totalSupply = BigNumber.from((await chainContext.decentramallTokenInstance.totalSupply()).toString());
 
-        const rentPrice = BigNumber.from((await estateAgentInstance.price(totalSupply.add(1).toString())).toString()).mul('10000000000000000').div('10').toString();
+        const rentPrice = BigNumber.from((await chainContext.estateAgentInstance.price(totalSupply.add(1).toString())).toString()).mul('10000000000000000').div('10').toString();
         // TODO: add tokenURI
-        const rentalAgentInstanceWithSigner = rentalAgentInstance.connect(signer) as ethers.Contract & RentalAgentInstance;
+        const rentalAgentInstanceWithSigner = chainContext.rentalAgentInstance.connect(chainContext.user.signer) as ethers.Contract & RentalAgentInstance;
+        const signerAddress = await chainContext.user.signer.getAddress();
         await rentalAgentInstanceWithSigner.rent(notRented[0].tokenId, cid, { from: signerAddress, value: rentPrice });
     }
 
@@ -73,11 +64,7 @@ export default function Rent() {
         }
     }
 
-    const renderContext = (chainContext: IChainContext) => {
-        setDecentramallToken(chainContext.decentramallTokenInstance);
-        setEstateAgent(chainContext.estateAgentInstance);
-        setRentalAgent(chainContext.rentalAgentInstance);
-
+    const renderContext = () => {
         // chack if user does not have rented space
         if (chainContext.user.rent === undefined) {
             return (
@@ -101,11 +88,7 @@ export default function Rent() {
         }
     }
 
-    return (
-        <ChainContext.Consumer>
-                {(chainContext) => renderContext(chainContext)}
-        </ChainContext.Consumer>
-    )
+    return renderContext()
 }
 
 const useStyles = makeStyles((theme) => ({

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { ChainContext } from '../_app'
 import { Button } from '@material-ui/core'
 import { ethers, BigNumber } from 'ethers'
-import { DecentramallTokenInstance, EstateAgentInstance } from '../../src/contracts/types/index';
+import { EstateAgentInstance } from '../../src/contracts/types/index';
 
 
 export default function Space() {
