@@ -124,9 +124,9 @@ export default function Rent() {
             );
         } else {
             //if user is already renting a space, display rent info
+                // <p>{JSON.stringify(chainContext.user.rent)}</p>
             return (
                 <>
-                // <p>{JSON.stringify(chainContext.user.rent)}</p>
                 <Box
                     display="flex"
                     flexDirection="column"
