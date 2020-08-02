@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles, Container, Grid, Paper, Typography } from '@material-ui/core';
 import Rent from './rent';
 import Space from './space';
 import { ChainContext } from '../_app';
 import { IChainContext, IUser } from '../../src/types';
-
+import { BigNumber } from 'ethers';
+import {decentramallTokenInstance} from '../../src/contracts/index';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -29,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Home() {
     const classes = useStyles()
     const [view, setView] = useState<string | undefined>();
+    const [disabled, setDisabled] = useState(false);
 
     const openView = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, newView: string) => {
         setView(newView);
@@ -50,6 +52,24 @@ export default function Home() {
         ];
     }
 
+    const rentStyle = (view: string) => {
+        async function checkTotalSupply() {
+            const totalSupply = BigNumber.from(await decentramallTokenInstance.totalSupply()).toNumber();
+            if(totalSupply === 0){
+                setDisabled(true);
+            }
+        }
+        checkTotalSupply();
+
+        if(view === 'rent' && disabled){
+            return {
+                color: '#999',
+                pointerEvents: 'none',
+                opacity: '0.7',
+            }
+        }
+    }
+
     const navigateOptions = (chainContext: IChainContext) => {
         if (view === 'space') {
             return <Space />;
@@ -61,7 +81,7 @@ export default function Home() {
                 <Grid container justify="center" spacing={5} style={{ marginTop: '40%', justifyContent: 'center', alignItems: 'center', }}>
                     {choices(chainContext.user).map((choice) => (
                         <Grid key={choice.title} item xs={12} md={6}>
-                            <Paper className={classes.paper} onClick={(e) => openView(e, choice.view)}>
+                            <Paper className={classes.paper} onClick={(e) => openView(e, choice.view)} style={rentStyle(choice.view)}>
                                 <img height="95" src={choice.picture} style={{margin:"2rem"}}/>
                                 <Typography variant="body1" component="p" gutterBottom>
                                     {choice.title}
