@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { makeStyles, Container, Grid, Paper, Typography } from '@material-ui/core';
-import { ChainContext } from './_app';
-import { IChainContext } from '../src/types';
+import { Container, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import { BigNumber } from 'ethers';
+import React, { useContext, useEffect, useState } from 'react';
 import { decentramallTokenInstance } from '../src/contracts/index';
+import { IChainContext } from '../src/types';
 import { appendBaseURL } from '../src/utils/url';
+import { ChainContext } from './_app';
 
 const useStyles = makeStyles((theme) => ({
     root: {

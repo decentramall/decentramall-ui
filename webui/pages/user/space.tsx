@@ -1,10 +1,10 @@
+import { Button, CircularProgress } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
-import React, { useState, useEffect, useContext } from 'react';
-import { ChainContext } from '../_app';
-import { Button, CircularProgress } from '@material-ui/core';
-import { ethers, BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
+import React, { useContext, useEffect, useState } from 'react';
 import { EstateAgentInstance } from '../../src/contracts/types/index';
+import { ChainContext } from '../_app';
 
 export default function Space() {
     const chainContext = useContext(ChainContext);
