@@ -14,6 +14,7 @@
     "jest": true,
     "node": true
   },
+  "ignorePatterns": ["src/contracts/types/index.d.ts"],
   "rules": {
     "react/react-in-jsx-scope": 0,
     "react/display-name": 0,
@@ -31,11 +32,7 @@
         "argsIgnorePattern": "^_"
       }
     ],
-    "no-console": [
-      2,
-      {
-        "allow": ["warn", "error"]
-      }
-    ]
+    "no-console": 0,
+    "@typescript-eslint/interface-name-prefix": 0
   }
 }
