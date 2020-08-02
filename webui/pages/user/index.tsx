@@ -32,6 +32,16 @@ export default function Home() {
     const [view, setView] = useState<string | undefined>();
     const [disabled, setDisabled] = useState(false);
 
+    useEffect(() => {
+        async function checkTotalSupply() {
+            const totalSupply = BigNumber.from(await decentramallTokenInstance.totalSupply()).toNumber();
+            if(totalSupply === 0){
+                setDisabled(true);
+            }
+        }
+        checkTotalSupply();
+    });
+
     const openView = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, newView: string) => {
         setView(newView);
         event.preventDefault();
@@ -53,21 +63,14 @@ export default function Home() {
     }
 
     const rentStyle = (view: string) => {
-        async function checkTotalSupply() {
-            const totalSupply = BigNumber.from(await decentramallTokenInstance.totalSupply()).toNumber();
-            if(totalSupply === 0){
-                setDisabled(true);
-            }
-        }
-        checkTotalSupply();
-
         if(view === 'rent' && disabled){
             return {
                 color: '#999',
                 pointerEvents: 'none',
                 opacity: '0.7',
-            }
+            } as any;
         }
+        return;
     }
 
     const navigateOptions = (chainContext: IChainContext) => {
