@@ -47,7 +47,7 @@ export default function MyApp(props: AppProps) {
             const { spaces, userRent, userSpace } = await loadSpaces(signer);
             setStateContext({
                 spaces,
-                user: { space: userSpace, rent: userRent },
+                user: { space: userSpace, rent: userRent, signer },
                 decentramallTokenInstance,
                 estateAgentInstance,
                 rentalAgentInstance,
