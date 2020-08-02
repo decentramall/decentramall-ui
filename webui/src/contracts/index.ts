@@ -11,7 +11,7 @@ import { createPow } from '@textile/powergate-client';
 import { IRent } from '../types';
 
 
-const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_JSON_RPC);
 
 const decentramallTokenInstance = new ethers.Contract(
     process.env.NEXT_PUBLIC_CONTRACT_DECENTRAMALL_TOKEN,

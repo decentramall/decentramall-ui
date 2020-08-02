@@ -6,7 +6,7 @@ import { ChainContext } from '../_app'
 import { IChainContext } from '../../src/types'
 import { Button } from '@material-ui/core'
 import { ethers, BigNumber } from 'ethers'
-import { DecentramallTokenInstance, EstateAgentInstance } from '../../../smart-contracts/types/truffle-contracts';
+import { DecentramallTokenInstance, EstateAgentInstance } from '../../src/contracts/types/index';
 
 
 export default function Space() {

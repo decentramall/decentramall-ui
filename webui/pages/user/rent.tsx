@@ -1,15 +1,11 @@
 import { createPow } from '@textile/powergate-client'
 import React, { useEffect, useState, useContext } from 'react'
-import { CreateFilecoinStorageDeal } from 'slate-react-system';
 import { Button, Input, makeStyles, TextField, CircularProgress } from '@material-ui/core';
 import { ChainContext } from '../_app';
 import { ethers, BigNumber } from 'ethers';
-import RentalAgentJSON from '../../../smart-contracts/build/contracts/RentalAgent.json';
-import EstateAgentJSON from '../../../smart-contracts/build/contracts/EstateAgent.json';
-import DecentramallTokenJSON from '../../../smart-contracts/build/contracts/DecentramallToken.json';
 import {
     RentalAgentInstance, EstateAgentInstance, DecentramallTokenInstance
-} from '../../../smart-contracts/types/truffle-contracts/index';
+} from '../../src/contracts/types/index';
 import { IChainContext } from '../../src/types';
 
 

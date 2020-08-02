@@ -3,7 +3,7 @@ import {
     DecentramallTokenInstance,
     EstateAgentInstance,
     RentalAgentInstance,
-} from '../../smart-contracts/types/truffle-contracts/index';
+} from '../src/contracts/types/index';
 
 export interface IRent {
     title: string;
