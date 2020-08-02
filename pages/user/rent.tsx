@@ -1,5 +1,4 @@
-import { createPow } from '@textile/powergate-client'
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { Button, Input, makeStyles, TextField, CircularProgress } from '@material-ui/core';
 import { ChainContext } from '../_app';
 import { ethers, BigNumber } from 'ethers';
@@ -7,12 +6,12 @@ import {
     RentalAgentInstance, EstateAgentInstance, DecentramallTokenInstance
 } from '../../src/contracts/types/index';
 import { IChainContext } from '../../src/types';
+import FFSStorage from '../../src/storage';
 
 
 export default function Rent() {
     const chainContext = useContext(ChainContext);
     const classes = useStyles();
-    let PowerGate = null
 
     const [picture, setPicture] = useState();
     const [title, setTitle] = useState('');
@@ -20,47 +19,20 @@ export default function Rent() {
     const [category, setCategory] = useState('');
     const [url, setUrl] = useState('');
 
-    const [pictureDealInProgress, setPictureDealInProgress] = useState(false);
-    const [jsonDealInProgress, setJSONDealInProgress] = useState(false);
+    const [dealInProgress, setDealInProgress] = useState(false);
 
     const [decentramallTokenInstance, setDecentramallToken] = useState<ethers.Contract & DecentramallTokenInstance | undefined>();
     const [estateAgentInstance, setEstateAgent] = useState<ethers.Contract & EstateAgentInstance | undefined>();
     const [rentalAgentInstance, setRentalAgent] = useState<ethers.Contract & RentalAgentInstance | undefined>();
 
-    useEffect(() => {
-        PowerGate = createPow({ host: process.env.NEXT_PUBLIC_POWERGATE_URL })
-        PowerGate.setToken(process.env.NEXT_PUBLIC_FFS_TOKEN)
-    });
-
     const handleSubmitNewRent = async () => {
         // TODO: verify fields
         // upload image first
-        const pictureCid = await _pictureStorageDeal();
-        // wait for image cid, generated json and upload it
-        const jsonRent = {
-            title,
-            description,
-            category,
-            logo: pictureCid,
-            url,
-        }
+        
+        const storage = new FFSStorage();
+        setDealInProgress(true);
+        const cid = await storage.submitStorage(picture, title, description, category, url, () => setDealInProgress(false));
 
-
-        console.log(jsonRent);
-
-        const { cid } = await PowerGate.ffs.stage(new Uint8Array(Buffer.from(JSON.stringify(jsonRent))));
-        const { jobId } = await PowerGate.ffs.pushStorageConfig(cid);
-        console.log(jobId);
-        setJSONDealInProgress(true);
-        const cancel = PowerGate.ffs.watchJobs((job) => {
-            console.log(job);
-            // the status 5 means: deal finished
-            PowerGate.ffs.get(job.cid).then(console.log);
-            if (job.status === 5) {
-                setJSONDealInProgress(false);
-                cancel();
-            }
-        }, jobId);
         // wait for json cid
         // TODO: remove replication
         const provider = new ethers.providers.Web3Provider((window as any).ethereum);
@@ -78,47 +50,6 @@ export default function Rent() {
         // TODO: add tokenURI
         const rentalAgentInstanceWithSigner = rentalAgentInstance.connect(signer) as ethers.Contract & RentalAgentInstance;
         await rentalAgentInstanceWithSigner.rent(notRented[0].tokenId, cid, { from: signerAddress, value: rentPrice });
-    }
-
-    const _getId = async () => {
-        // console.log(await PowerGate.ffs.get(this.state.cid));
-        console.log(await PowerGate.ffs.showAll());
-    }
-
-    const _pictureStorageDeal = async () => {
-        //const file = data.file.files[0];
-        const file = picture;
-        if (file === undefined) {
-            return;
-        }
-        var buffer = [];
-        // NOTE(jim): A little hacky...
-        const getByteArray = async () =>
-            new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = function (e) {
-                    if (e.target.readyState == FileReader.DONE) {
-                        buffer = new Uint8Array(e.target.result as any) as any;
-                    }
-                    resolve();
-                };
-                reader.readAsArrayBuffer(file);
-            });
-        await getByteArray();
-        const { cid } = await PowerGate.ffs.stage(buffer);
-        const { jobId } = await PowerGate.ffs.pushStorageConfig(cid);
-        console.log(jobId);
-        setPictureDealInProgress(true);
-        const cancel = PowerGate.ffs.watchJobs((job) => {
-            console.log(job);
-            // the status 5 means: deal finished
-            PowerGate.ffs.get(job.cid).then(console.log);
-            if (job.status === 5) {
-                setPictureDealInProgress(false);
-                cancel();
-            }
-        }, jobId);
-        return cid;
     }
 
     const selectImage = (event: React.ChangeEvent<any>) => {
@@ -159,10 +90,8 @@ export default function Rent() {
                         <Input type="file" onChange={selectImage} />
                     </form>
                     <br />
-                    {/* <CreateFilecoinStorageDeal onSubmit={this._handleSubmit} /> */}
                     <Button onClick={handleSubmitNewRent}>Submit</Button>
-                    {/* <Button onClick={_getId}>Get</Button> */}
-                    {(pictureDealInProgress || jsonDealInProgress) && <CircularProgress />}
+                    {dealInProgress && <CircularProgress />}
                 </>
             )
         } else {  

@@ -7,8 +7,8 @@ import {
     RentalAgentInstance,
 } from './types/index';
 import { ethers } from 'ethers';
-import { createPow } from '@textile/powergate-client';
 import { IRent } from '../types';
+import FFSStorage from '../storage';
 
 
 const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_JSON_RPC);
@@ -38,8 +38,7 @@ const loadSpaces = async (signer: ethers.Signer) => {
     const signerAddress = await signer.getAddress();
     const totalTokens = await decentramallTokenInstance.totalSupply();
     if (totalTokens.toNumber() > 0) {
-        const PowerGate = createPow({ host: process.env.NEXT_PUBLIC_POWERGATE_URL })
-        PowerGate.setToken(process.env.NEXT_PUBLIC_FFS_TOKEN)
+        const storage = new FFSStorage();
 
         const mapSpace = async (logArgs: any) => {
             const tokenId = logArgs.tokenId.toString();
@@ -47,7 +46,7 @@ const loadSpaces = async (signer: ethers.Signer) => {
             let rent: IRent;
             if (rentCid.length > 0) {
                 const spaceInfo = await rentalAgentInstance.spaceInfo(tokenId);
-                rent = JSON.parse(new TextDecoder("utf-8").decode((await PowerGate.ffs.get(rentCid))));
+                rent = await storage.getStorage(rentCid);
                 rent = {
                     ...rent,
                     // rightfulOwner: spaceInfo[0]
