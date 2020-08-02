@@ -68,14 +68,6 @@ export default function Space() {
                             </Box>
                             <Box fontWeight="regular">{chainContext.user.space.tokenId}</Box>
                         </Box>
-                        {/*<Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
-                            <Box fontWeight="bold" marginRight="1rem">
-                            Space status:
-                            </Box>
-                            <Box fontWeight="regular">
-                            {chainContext.user.space.rent !== undefined ? "Rented" : "Available for rent"}
-                            </Box>
-                        </Box>*/}
                     </Typography>
                 </Box>
             );
