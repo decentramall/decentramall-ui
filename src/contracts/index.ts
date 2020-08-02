@@ -1,40 +1,35 @@
+import { ethers } from 'ethers';
+import FFSStorage from '../storage';
+import { IRent, ISpace } from '../types';
 import DecentramallTokenJSON from './abi/DecentramallToken.json';
 import EstateAgentJSON from './abi/EstateAgent.json';
 import RentalAgentJSON from './abi/RentalAgent.json';
-import {
-    DecentramallTokenInstance,
-    EstateAgentInstance,
-    RentalAgentInstance,
-} from './types/index';
-import { ethers } from 'ethers';
-import { IRent } from '../types';
-import FFSStorage from '../storage';
-
+import { DecentramallTokenInstance, EstateAgentInstance, RentalAgentInstance } from './types/index';
 
 const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_JSON_RPC);
 
 const decentramallTokenInstance = new ethers.Contract(
     process.env.NEXT_PUBLIC_CONTRACT_DECENTRAMALL_TOKEN,
     DecentramallTokenJSON,
-    provider,
+    provider
 ) as ethers.Contract & DecentramallTokenInstance;
 
 const estateAgentInstance = new ethers.Contract(
     process.env.NEXT_PUBLIC_CONTRACT_ESTATE_AGENT,
     EstateAgentJSON,
-    provider,
+    provider
 ) as ethers.Contract & EstateAgentInstance;
 
 const rentalAgentInstance = new ethers.Contract(
     process.env.NEXT_PUBLIC_CONTRACT_RENTAL_AGENT,
     RentalAgentJSON,
-    provider,
+    provider
 ) as ethers.Contract & RentalAgentInstance;
 
 const loadSpaces = async (signer: ethers.Signer) => {
-    let userRent;
-    let userSpace;
-    let spaces = [];
+    let userRent: IRent;
+    let userSpace: ISpace;
+    const spaces: ISpace[] = [];
     const signerAddress = await signer.getAddress();
     const totalTokens = await decentramallTokenInstance.totalSupply();
     if (totalTokens.toNumber() > 0) {
@@ -53,7 +48,7 @@ const loadSpaces = async (signer: ethers.Signer) => {
                     rentedTo: spaceInfo[1].toString(),
                     rentalEarned: spaceInfo[2].toString(),
                     expiryBlock: spaceInfo[3].toString(),
-                }
+                };
                 // add user rent here
                 if (spaceInfo[1].toString() === signerAddress) {
                     userRent = rent;
@@ -63,22 +58,20 @@ const loadSpaces = async (signer: ethers.Signer) => {
                 buyer: logArgs.buyer.toString(),
                 price: logArgs.price.toString(),
                 tokenId,
-                rent
-            }
-        }
+                rent,
+            };
+        };
         const ifaceEstateAgent = new ethers.utils.Interface(EstateAgentJSON);
         const logsEstateAgent = await provider.getLogs({
             address: process.env.NEXT_PUBLIC_CONTRACT_ESTATE_AGENT,
             fromBlock: 0,
             toBlock: 'latest',
-            topics: [[
-                ethers.utils.id('BuyToken(address,uint256,uint256)'),
-            ]]
+            topics: [[ethers.utils.id('BuyToken(address,uint256,uint256)')]],
         });
 
         if (logsEstateAgent.length > 0) {
             for (let x = 0; x < logsEstateAgent.length; x += 1) {
-                spaces.push((await mapSpace(ifaceEstateAgent.parseLog(logsEstateAgent[x]).args)));
+                spaces.push(await mapSpace(ifaceEstateAgent.parseLog(logsEstateAgent[x]).args));
             }
             userSpace = spaces.find((s) => s.buyer === signerAddress);
             console.log('mappedSpace', spaces);
@@ -88,12 +81,7 @@ const loadSpaces = async (signer: ethers.Signer) => {
         userSpace,
         userRent,
         spaces,
-    }
-}
+    };
+};
 
-export {
-    decentramallTokenInstance,
-    estateAgentInstance,
-    rentalAgentInstance,
-    loadSpaces,
-}
+export { decentramallTokenInstance, estateAgentInstance, rentalAgentInstance, loadSpaces };

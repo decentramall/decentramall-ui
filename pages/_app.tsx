@@ -1,18 +1,12 @@
-import CssBaseline from '@material-ui/core/CssBaseline'
-import { ThemeProvider } from '@material-ui/core/styles'
-import { AppProps } from 'next/app'
-import Head from 'next/head'
-import React, { useState } from 'react'
-import theme from '../src/theme'
-import { ethers } from "ethers";
-import {
-    decentramallTokenInstance,
-    rentalAgentInstance,
-    estateAgentInstance,
-    loadSpaces,
-} from '../src/contracts'
-import { IChainContext } from '../src/types'
-
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@material-ui/core/styles';
+import { ethers } from 'ethers';
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import React, { useState } from 'react';
+import { decentramallTokenInstance, estateAgentInstance, loadSpaces, rentalAgentInstance } from '../src/contracts';
+import theme from '../src/theme';
+import { IChainContext } from '../src/types';
 
 export const ChainContext = React.createContext<IChainContext>({
     spaces: [],
@@ -24,13 +18,13 @@ export default function MyApp(props: AppProps) {
         spaces: [],
         user: {},
     });
-    const { Component, pageProps } = props
+    const { Component, pageProps } = props;
 
     React.useEffect(() => {
         // Remove the server-side injected CSS.
-        const jssStyles = document.querySelector('#jss-server-side')
+        const jssStyles = document.querySelector('#jss-server-side');
         if (jssStyles) {
-            jssStyles.parentElement!.removeChild(jssStyles)
+            jssStyles.parentElement?.removeChild(jssStyles);
         }
 
         const loadWeb3 = async () => {
@@ -52,18 +46,15 @@ export default function MyApp(props: AppProps) {
                 estateAgentInstance,
                 rentalAgentInstance,
             });
-        }
+        };
         loadWeb3();
-    }, [])
+    }, []);
 
     return (
         <React.Fragment>
             <Head>
                 <title>My page</title>
-                <meta
-                    name="viewport"
-                    content="minimum-scale=1, initial-scale=1, width=device-width"
-                />
+                <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
             </Head>
             <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
@@ -73,5 +64,5 @@ export default function MyApp(props: AppProps) {
                 </ChainContext.Provider>
             </ThemeProvider>
         </React.Fragment>
-    )
+    );
 }

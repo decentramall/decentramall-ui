@@ -1,11 +1,10 @@
-import { createPow } from "@textile/powergate-client";
+import { createPow } from '@textile/powergate-client';
 
 export default class FFSStorage {
-
     private PowerGate = createPow({ host: process.env.NEXT_PUBLIC_POWERGATE_URL });
 
     constructor() {
-        this.PowerGate.setToken(process.env.NEXT_PUBLIC_FFS_TOKEN)
+        this.PowerGate.setToken(process.env.NEXT_PUBLIC_FFS_TOKEN);
     }
 
     async submitStorage(
@@ -14,7 +13,7 @@ export default class FFSStorage {
         description: string,
         category: string,
         url: string,
-        callback: () => void,
+        callback: () => void
     ) {
         const _pictureStorageDeal = async () => {
             //const file = data.file.files[0];
@@ -22,7 +21,7 @@ export default class FFSStorage {
             if (file === undefined) {
                 return;
             }
-            var buffer: Uint8Array;
+            let buffer: Uint8Array;
             // NOTE(jim): A little hacky...
             const getByteArray = async () =>
                 new Promise((resolve) => {
@@ -48,7 +47,7 @@ export default class FFSStorage {
                 }
             }, jobId);
             return cid;
-        }
+        };
 
         // upload image first
         const pictureCid = await _pictureStorageDeal();
@@ -59,8 +58,7 @@ export default class FFSStorage {
             category,
             logo: pictureCid,
             url,
-        }
-
+        };
 
         console.log(jsonRent);
 
@@ -80,6 +78,6 @@ export default class FFSStorage {
     }
 
     async getStorage(cid: string) {
-        return JSON.parse(new TextDecoder("utf-8").decode((await this.PowerGate.ffs.get(cid))));
+        return JSON.parse(new TextDecoder('utf-8').decode(await this.PowerGate.ffs.get(cid)));
     }
 }
