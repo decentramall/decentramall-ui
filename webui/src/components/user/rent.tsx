@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react'
 import { Button, Input, makeStyles, TextField, CircularProgress } from '@material-ui/core';
-import { ChainContext } from '../_app';
+import { ChainContext } from '../../../pages/_app';
 import { ethers, BigNumber } from 'ethers';
 import {
     RentalAgentInstance
-} from '../../src/contracts/types/index';
-import FFSStorage from '../../src/storage';
+} from '../../contracts/types/index';
+import FFSStorage from '../../storage';
 
 
 export default function Rent() {
