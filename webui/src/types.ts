@@ -3,7 +3,7 @@ import {
     DecentramallTokenInstance,
     EstateAgentInstance,
     RentalAgentInstance,
-} from '../../smart-contracts/types/truffle-contracts/index';
+} from '../src/contracts/types/index';
 
 export interface IRent {
     title: string;
@@ -35,7 +35,7 @@ export interface IUser {
 export interface IChainContext {
     spaces: ISpace[];
     user: IUser;
-    decentramallTokenInstance: ethers.Contract & DecentramallTokenInstance | undefined;
-    estateAgentInstance: ethers.Contract & EstateAgentInstance | undefined;
-    rentalAgentInstance: ethers.Contract & RentalAgentInstance | undefined;
+    decentramallTokenInstance?: ethers.Contract & DecentramallTokenInstance;
+    estateAgentInstance?: ethers.Contract & EstateAgentInstance;
+    rentalAgentInstance?: ethers.Contract & RentalAgentInstance;
 }
