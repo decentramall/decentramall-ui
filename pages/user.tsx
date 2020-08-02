@@ -6,8 +6,8 @@ import {
   Paper,
   Typography,
 } from '@material-ui/core'
-import Rent from './user/rent'
-import Space from './user/space'
+import Rent from '../src/components/user/rent'
+import Space from '../src/components/user/space'
 import { ChainContext } from './_app'
 import { IChainContext, IUser } from '../src/types'
 import { BigNumber } from 'ethers'
