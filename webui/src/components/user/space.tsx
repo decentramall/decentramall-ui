@@ -1,10 +1,10 @@
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import React, { useState, useEffect, useContext } from 'react'
-import { ChainContext } from '../_app'
+import { ChainContext } from '../../../pages/_app'
 import { Button } from '@material-ui/core'
 import { ethers, BigNumber } from 'ethers'
-import { EstateAgentInstance } from '../../src/contracts/types/index';
+import { EstateAgentInstance } from '../../contracts/types/index';
 
 
 export default function Space() {
