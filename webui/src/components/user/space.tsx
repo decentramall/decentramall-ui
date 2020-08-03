@@ -6,6 +6,7 @@ import { Button, DialogTitle, Dialog, DialogContent, DialogContentText, DialogAc
 import { ethers, BigNumber } from 'ethers';
 import { EstateAgentInstance } from '../../contracts/types/index';
 
+
 export default function Space() {
     const chainContext = useContext(ChainContext);
     const { decentramallTokenInstance, estateAgentInstance, user } = chainContext;
@@ -36,10 +37,17 @@ export default function Space() {
             const signerAddress = await signer.getAddress();
             (estateAgentInstance.connect(signer) as ethers.Contract & EstateAgentInstance)
                 .buy({ from: signerAddress, value: nextPrice })
-                .then((response) => {
-                    console.log(response, JSON.stringify(response))
-                    // TODO: update user space!
-                    setSuccessBuying(true);
+                .then(async (response) => {
+                    await (response as any).wait()
+                    // Receive an event when that filter occurs
+                    estateAgentInstance.once(
+                        estateAgentInstance.filters.BuyToken(signerAddress, null, null),
+                        (buyer, price, tokenId, event) => {
+                            // TODO: get data from tokenid just like in loadSpaces method in src/contracts/index.ts
+                            console.log(buyer, price, tokenId);
+                            setSuccessBuying(true);
+                        });
+
                 })
                 .catch(() => setErrorBuying(true))
                 .finally(() => setFinishedTx(true));
