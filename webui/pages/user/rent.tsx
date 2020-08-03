@@ -1,6 +1,9 @@
 import { Button, CircularProgress, Input, makeStyles, TextField } from '@material-ui/core';
 import { BigNumber, ethers } from 'ethers';
 import React, { useContext, useState } from 'react';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
+import { ChainContext } from '../_app';
 import { RentalAgentInstance } from '../../src/contracts/types/index';
 import FFSStorage from '../../src/storage';
 import { ChainContext } from '../_app';
@@ -76,7 +79,7 @@ export default function Rent() {
     };
 
     const renderContext = () => {
-        // chack if user does not have rented space
+        // check if user does not have rented space
         if (chainContext.user.rent === undefined) {
             return (
                 <>
@@ -121,7 +124,53 @@ export default function Rent() {
                 </>
             );
         } else {
-            <p>{JSON.stringify(chainContext.user.rent)}</p>;
+            //if user is already renting a space, display rent info
+            return (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    margin="auto"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Typography component="div" gutterBottom style={{ marginTop: '4rem', textAlign: 'center' }}>
+                        <Box fontWeight="lighter" fontSize="2rem" marginBottom="3rem" textAlign="left">
+                            Your rent details:
+                        </Box>
+                        <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                            <Box fontWeight="bold" marginRight="1rem">
+                                Store name:
+                            </Box>
+                            <Box fontWeight="regular">{chainContext.user.rent.title}</Box>
+                        </Box>
+                        <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                            <Box fontWeight="bold" marginRight="1rem">
+                                Category:
+                            </Box>
+                            <Box fontWeight="regular">{chainContext.user.rent.category}</Box>
+                        </Box>
+                        <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                            <Box fontWeight="bold" marginRight="1rem">
+                                Description:
+                            </Box>
+                            <Box fontWeight="regular">{chainContext.user.rent.description}</Box>
+                        </Box>
+                        <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                            <Box fontWeight="bold" marginRight="1rem">
+                                URL:
+                            </Box>
+                            <Box fontWeight="regular">{chainContext.user.rent.url}</Box>
+                        </Box>
+                        <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                            <Box fontWeight="bold" marginRight="1rem">
+                                End of the rent:
+                            </Box>
+                            //Displayed in block number
+                            <Box fontWeight="regular">{chainContext.user.rent.expiryBlock}</Box>
+                        </Box>
+                    </Typography>
+                </Box>
+            );
         }
     };
 
