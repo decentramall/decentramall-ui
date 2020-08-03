@@ -36,7 +36,7 @@ export default function Home() {
     const classes = useStyles();
     const [view, setView] = useState(0);
     const [disabled, setDisabled] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function checkTotalSupply() {
