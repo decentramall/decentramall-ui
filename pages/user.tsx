@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { makeStyles, Container, Grid, Paper, Typography } from '@material-ui/core';
 import Rent from '../src/components/user/rent';
 import Space from '../src/components/user/space';
 import { ChainContext } from './_app';
-import { IChainContext, IUser } from '../src/types';
 import { BigNumber } from 'ethers';
-import { decentramallTokenInstance } from '../src/contracts/index';
+
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -28,89 +31,54 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Home() {
+    const chainContext = useContext(ChainContext);
+    const { decentramallTokenInstance, user } = chainContext;
     const classes = useStyles();
-    const [view, setView] = useState<string | undefined>();
+    const [view, setView] = useState(0);
     const [disabled, setDisabled] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function checkTotalSupply() {
-            const totalSupply = BigNumber.from(await decentramallTokenInstance.totalSupply()).toNumber();
-            if (totalSupply === 0) {
-                setDisabled(true);
+            if (decentramallTokenInstance !== undefined) {
+                const totalSupply = BigNumber.from(
+                    await decentramallTokenInstance.totalSupply()
+                ).toNumber();
+                if (totalSupply === 0) {
+                    setDisabled(true);
+                }
+                setLoading(false);
             }
         }
         checkTotalSupply();
-    });
+    }, [decentramallTokenInstance]);
 
-    const openView = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, newView: string) => {
-        setView(newView);
-        event.preventDefault();
-    };
+    if (loading) {
+        return <>Loading...</>;
+    }
 
-    const choices = (user: IUser) => {
-        return [
-            {
-                title: (user.space !== undefined ? 'View your' : 'Buy') + ' SPACE',
-                picture: 'images/navigate-icons/category.svg',
-                view: 'space',
-            },
-            {
-                title: 'Rent SPACE',
-                picture: 'images/navigate-icons/others.svg',
-                view: 'rent',
-            },
-        ];
-    };
-
-    const rentStyle = (view: string) => {
-        if (view === 'rent' && disabled) {
-            return {
-                color: '#999',
-                pointerEvents: 'none',
-                opacity: '0.7',
-            } as any;
-        }
-        return;
-    };
-
-    const navigateOptions = (chainContext: IChainContext) => {
-        if (view === 'space') {
-            return <Space />;
-        } else if (view === 'rent') {
-            return <Rent />;
-        } else {
-            return (
-                <Container maxWidth="sm">
-                    {/* TODO: align vertically */}
-                    <Grid
-                        container
-                        justify="center"
-                        spacing={5}
-                        style={{
-                            marginTop: '40%',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                    >
-                        {choices(chainContext.user).map((choice) => (
-                            <Grid key={choice.title} item xs={12} md={6}>
-                                <Paper
-                                    className={classes.paper}
-                                    onClick={(e) => openView(e, choice.view)}
-                                    style={rentStyle(choice.view)}
-                                >
-                                    <img height="95" src={choice.picture} style={{ margin: '2rem' }} />
-                                    <Typography variant="body1" component="p" gutterBottom>
-                                        {choice.title}
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Container>
-            );
-        }
-    };
-
-    return <ChainContext.Consumer>{(chainContext) => navigateOptions(chainContext)}</ChainContext.Consumer>;
+    return (
+        <>
+            <Container maxWidth="md">{view === 0 ? <Space /> : <Rent />}</Container>
+            <BottomNavigation
+                value={view}
+                onChange={(event, newValue) => {
+                    setView(newValue);
+                }}
+                showLabels
+                className={classes.root}
+            >
+                <BottomNavigationAction
+                    label={user.space !== undefined ? 'View Your SPACE' : 'Buy Space'}
+                    icon={<FavoriteIcon />}
+                />
+                <BottomNavigationAction
+                    label={user.rent !== undefined ? 'View Your Rent' : ('Rent Space' + (disabled ? ' (no SPACE available)' : ''))}
+                    style={{ opacity: disabled ? '0.5' : '1' }}
+                    disabled={disabled}
+                    icon={<LocationOnIcon />}
+                />
+            </BottomNavigation>
+        </>
+    );
 }
