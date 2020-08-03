@@ -13,11 +13,6 @@
     "test": "jest",
     "test-all": "yarn lint && yarn type-check && yarn test"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "*.@(ts|tsx)": [
       "organize-imports-cli",
