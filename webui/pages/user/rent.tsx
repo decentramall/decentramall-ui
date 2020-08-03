@@ -1,11 +1,12 @@
+import { Button, CircularProgress, Input, makeStyles, TextField } from '@material-ui/core';
+import { BigNumber, ethers } from 'ethers';
+import React, { useContext, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
-import React, { useState, useContext } from 'react';
-import { Button, Input, makeStyles, TextField, CircularProgress } from '@material-ui/core';
 import { ChainContext } from '../_app';
-import { ethers, BigNumber } from 'ethers';
 import { RentalAgentInstance } from '../../src/contracts/types/index';
 import FFSStorage from '../../src/storage';
+import { ChainContext } from '../_app';
 
 export default function Rent() {
     const chainContext = useContext(ChainContext);
