@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { makeStyles, Container, Grid, Paper, Typography, Avatar } from '@material-ui/core';
-import Rent from '../src/components/user/rent';
-import Space from '../src/components/user/space';
-import { ChainContext } from './_app';
+import Rent from '../../src/components/user/rent';
+import Space from '../../src/components/user/space';
+import { ChainContext } from '../_app';
 import { BigNumber } from 'ethers';
 
 import BottomNavigation from '@material-ui/core/BottomNavigation';
