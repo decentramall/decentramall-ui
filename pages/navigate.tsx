@@ -1,5 +1,6 @@
-import { Container, createStyles, Grid, makeStyles, Paper, Theme, Typography } from '@material-ui/core';
+import { Container, createStyles, Grid, makeStyles, Paper, Theme, Typography, InputBase, IconButton } from '@material-ui/core';
 import React from 'react';
+import SearchIcon from '@material-ui/icons/Search';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -7,16 +8,38 @@ const useStyles = makeStyles((theme: Theme) =>
             flexGrow: 1,
         },
         paper: {
+            display: 'flex',
             flex: 1,
             flexDirection: 'column',
             justifyContent: 'center',
-            height: 150,
-            width: 150,
+            alignItems: 'center',
+            height: '23vh',
+            width: '12vw',
+            minWidth: '10rem',
             cursor: 'pointer',
         },
         control: {
             padding: theme.spacing(2),
         },
+        formContainer:{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        form:{
+            padding: '2px 4px',
+            display: 'flex',
+            alignItems: 'center',
+            width: 400,
+        },
+        input:{
+            marginLeft: theme.spacing(1),
+            flex: 1,
+        },
+        iconButton: {
+            padding: 10,
+        }
     })
 );
 
@@ -38,13 +61,34 @@ export default function Navigate() {
     ];
 
     return (
-        <Container maxWidth="sm">
+        <Container maxWidth="lg">
             {/* TODO: align vertically */}
-            <Grid container justify="center" spacing={5} style={{ marginTop: '40%' }}>
+            <Grid
+                container
+                justify="center"
+                spacing={5}
+                style={{
+                    marginTop: '20%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <Grid item xs={12} className={classes.formContainer}>
+                <Paper component="form" className={classes.form}>
+                    <InputBase
+                        className={classes.input}
+                        placeholder="Search Decentramall Stores"
+                        inputProps={{ 'aria-label': 'search stores' }}
+                    />
+                    <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                        <SearchIcon />
+                    </IconButton>
+                    </Paper>
+                </Grid>
                 {choices.map((choice) => (
                     <Grid key={choice.title} item>
                         <Paper className={classes.paper}>
-                            <img height="95" src={choice.picture} />
+                            <img height="95" src={choice.picture} style={{ margin: '2rem' }} />
                             <Typography variant="body1" component="p" gutterBottom>
                                 {choice.title}
                             </Typography>
