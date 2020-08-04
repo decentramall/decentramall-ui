@@ -43,7 +43,8 @@ export default function Space() {
                     estateAgentInstance.once(
                         estateAgentInstance.filters.BuyToken(signerAddress, null, null),
                         (buyer, price, tokenId, event) => {
-                            // TODO: get data from tokenid just like in loadSpaces method in src/contracts/index.ts
+                            // TODO: get data from tokenid just like in loadSpaces method in src/contracts/index.ts inead of refreshing page
+                            window.location.reload(false)
                             console.log(buyer, price, tokenId);
                             setSuccessBuying(true);
                         });
