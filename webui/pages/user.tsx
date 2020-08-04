@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { makeStyles, Container, Grid, Paper, Typography } from '@material-ui/core';
+import { makeStyles, Container, Grid, Paper, Typography, Avatar } from '@material-ui/core';
 import Rent from '../src/components/user/rent';
 import Space from '../src/components/user/space';
 import { ChainContext } from './_app';
@@ -37,6 +37,7 @@ export default function Home() {
     const [view, setView] = useState(0);
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [signerAddress, setSignerAddress] = useState('');
 
     useEffect(() => {
         async function checkTotalSupply() {
@@ -47,6 +48,7 @@ export default function Home() {
                 if (totalSupply === 0) {
                     setDisabled(true);
                 }
+                setSignerAddress(await chainContext.user.signer.getAddress());
                 setLoading(false);
             }
         }
@@ -59,6 +61,14 @@ export default function Home() {
 
     return (
         <>
+            <div style={{ width: '100%', marginLeft: '30%' }}>
+                <Paper elevation={3} style={{ width: '45%', padding: '10px', }}>
+                    <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
+                    <Typography variant="overline" display="block" gutterBottom>
+                        currently logged-in with <b>{signerAddress}</b>
+                    </Typography>
+                </Paper>
+            </div>
             <Container maxWidth="md">{view === 0 ? <Space /> : <Rent />}</Container>
             <BottomNavigation
                 value={view}
