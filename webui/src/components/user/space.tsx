@@ -82,14 +82,6 @@ export default function Space() {
                             </Box>
                             <Box fontWeight="regular">{userSpace.tokenId}</Box>
                         </Box>
-                        {/*                <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
-                    <Box fontWeight="bold" marginRight="1rem">
-                    Space status:
-                    </Box>
-                    <Box fontWeight="regular">
-                    {userSpace.rent !== undefined ? "Rented" : "Available for rent"}
-                    </Box>
-                </Box>*/}
                     </Typography>
                 </Box>
             );
@@ -103,7 +95,7 @@ export default function Space() {
                         variant="contained"
                         color="primary"
                         onClick={buySpace}
-                        style={{ marginTop: '2rem', width: '10vw' }}
+                        style={{ marginTop: '2rem' }}
                     >
                         Buy this SPACE
                     </Button>
