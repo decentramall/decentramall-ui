@@ -105,8 +105,10 @@ export const Home = (): JSX.Element => {
                     </IconButton>
                     </Paper>
                 </Grid>
-                <Grid item xs={12}>
-                    Spaces
+                <Grid item xs={12} style={{display: 'flex', flexDirection: 'column'}}>
+                    <Box fontWeight="bold" fontSize="1.2rem" textAlign="center">
+                        Stores Currently Open
+                    </Box>
                 <StackGrid
                     duration={480}
                     columnWidth={150}
@@ -121,7 +123,7 @@ export const Home = (): JSX.Element => {
                     rtl={false}
                 >
                     {chainContext.spaces.filter(space => 
-                        space.rent.title.toLowerCase().includes(search.toLowerCase())).map((space) => (
+                        space.rent?.title.toLowerCase().includes(search.toLowerCase())).map((space) => (
                             <Grid key={space.tokenId} item xs={3}>
                                 <Paper className={classes.paper}>
                                     {/* <img height="95" src={choice.picture} /> */}
