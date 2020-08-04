@@ -2,40 +2,61 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import React, { useState, useEffect, useContext } from 'react';
 import { ChainContext } from '../../../pages/_app';
-import { Button } from '@material-ui/core';
+import { Button, DialogTitle, Dialog, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { ethers, BigNumber } from 'ethers';
 import { EstateAgentInstance } from '../../contracts/types/index';
+
 
 export default function Space() {
     const chainContext = useContext(ChainContext);
     const { decentramallTokenInstance, estateAgentInstance, user } = chainContext;
+    const [userSpace, setUserSpace] = useState(user.space);
     const [nextPrice, setNextPrice] = useState<string>('0');
+    const [errorBuying, setErrorBuying] = useState(false);
+    const [successBuying, setSuccessBuying] = useState(false);
+    const [finishedTx, setFinishedTx] = useState(false);
 
     useEffect(() => {
         const loadNextPrice = async () => {
-            const nextT = await decentramallTokenInstance.totalSupply();
-            const currentNextPrice = BigNumber.from((await estateAgentInstance.price(nextT.toNumber() + 1)).toString())
-                .mul(BigNumber.from('10000000000000000'))
-                .toString();
-            setNextPrice(currentNextPrice);
+            if (decentramallTokenInstance !== undefined) {
+                const nextT = await decentramallTokenInstance.totalSupply();
+                const currentNextPrice = BigNumber.from(
+                    (await estateAgentInstance.price(nextT.toNumber() + 1)).toString()
+                )
+                    .mul(BigNumber.from('10000000000000000'))
+                    .toString();
+                setNextPrice(currentNextPrice);
+            }
         };
         loadNextPrice();
-    });
+    }, [decentramallTokenInstance]);
 
     const buySpace = async () => {
         const { signer } = user;
         if (signer !== undefined) {
             const signerAddress = await signer.getAddress();
             (estateAgentInstance.connect(signer) as ethers.Contract & EstateAgentInstance)
-            .buy({ from: signerAddress, value: nextPrice })
-            .then((response) => {
-                response.wait(1).then(window.location.reload(false)) 
-            });
+                .buy({ from: signerAddress, value: nextPrice })
+                .then(async (response) => {
+                    await (response as any).wait()
+                    // Receive an event when that filter occurs
+                    estateAgentInstance.once(
+                        estateAgentInstance.filters.BuyToken(signerAddress, null, null),
+                        (buyer, price, tokenId, event) => {
+                            // TODO: get data from tokenid just like in loadSpaces method in src/contracts/index.ts inead of refreshing page
+                            window.location.reload(false)
+                            console.log(buyer, price, tokenId);
+                            setSuccessBuying(true);
+                        });
+
+                })
+                .catch(() => setErrorBuying(true))
+                .finally(() => setFinishedTx(true));
         }
     };
 
     const renderContext = () => {
-        if (chainContext.user.space !== undefined) {
+        if (userSpace !== undefined) {
             return (
                 <Box display="flex" flexDirection="column" margin="auto" justifyContent="center" alignItems="center">
                     <Typography component="div" gutterBottom style={{ marginTop: '4rem', textAlign: 'center' }}>
@@ -46,30 +67,22 @@ export default function Space() {
                             <Box fontWeight="bold" marginRight="1rem">
                                 Buyer:
                             </Box>
-                            <Box fontWeight="regular">{chainContext.user.space.buyer}</Box>
+                            <Box fontWeight="regular">{userSpace.buyer}</Box>
                         </Box>
                         <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
                             <Box fontWeight="bold" marginRight="1rem">
                                 Price:
                             </Box>
                             <Box fontWeight="regular">
-                                {(parseFloat(chainContext.user.space.price) / 10 ** 18).toFixed(8)} ETH
+                                {(parseFloat(userSpace.price) / 10 ** 18).toFixed(8)} ETH
                             </Box>
                         </Box>
                         <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
                             <Box fontWeight="bold" marginRight="1rem">
                                 Token ID:
                             </Box>
-                            <Box fontWeight="regular">{chainContext.user.space.tokenId}</Box>
+                            <Box fontWeight="regular">{userSpace.tokenId}</Box>
                         </Box>
-                        {/*                <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
-                    <Box fontWeight="bold" marginRight="1rem">
-                    Space status:
-                    </Box>
-                    <Box fontWeight="regular">
-                    {chainContext.user.space.rent !== undefined ? "Rented" : "Available for rent"}
-                    </Box>
-                </Box>*/}
                     </Typography>
                 </Box>
             );
@@ -83,7 +96,7 @@ export default function Space() {
                         variant="contained"
                         color="primary"
                         onClick={buySpace}
-                        style={{ marginTop: '2rem', width: '10vw' }}
+                        style={{ marginTop: '2rem' }}
                     >
                         Buy this SPACE
                     </Button>
@@ -93,8 +106,8 @@ export default function Space() {
     };
 
     const renderContextStatus = () => {
-        if (chainContext.user.space !== undefined) {
-            if (chainContext.user.space.rent !== undefined) {
+        if (userSpace !== undefined) {
+            if (userSpace.rent !== undefined) {
                 return (
                     <Box
                         display="flex"
@@ -111,37 +124,37 @@ export default function Space() {
                                 <Box fontWeight="bold" marginRight="1rem">
                                     Rented to:
                                 </Box>
-                                <Box fontWeight="regular">{chainContext.user.space.rent.rentedTo}</Box>
+                                <Box fontWeight="regular">{userSpace.rent.rentedTo}</Box>
                             </Box>
                             <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
                                 <Box fontWeight="bold" marginRight="1rem">
                                     Rental earned:
                                 </Box>
-                                <Box fontWeight="regular">{chainContext.user.space.rent.rentalEarned}</Box>
+                                <Box fontWeight="regular">{userSpace.rent.rentalEarned}</Box>
                             </Box>
                             <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
                                 <Box fontWeight="bold" marginRight="1rem">
                                     Store's name:
                                 </Box>
-                                <Box fontWeight="regular">{chainContext.user.space.rent.title}</Box>
+                                <Box fontWeight="regular">{userSpace.rent.title}</Box>
                             </Box>
                             <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
                                 <Box fontWeight="bold" marginRight="1rem">
                                     Category:
                                 </Box>
-                                <Box fontWeight="regular">{chainContext.user.space.rent.category}</Box>
+                                <Box fontWeight="regular">{userSpace.rent.category}</Box>
                             </Box>
                             <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
                                 <Box fontWeight="bold" marginRight="1rem">
                                     Description:
                                 </Box>
-                                <Box fontWeight="regular">{chainContext.user.space.rent.description}</Box>
+                                <Box fontWeight="regular">{userSpace.rent.description}</Box>
                             </Box>
                             <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
                                 <Box fontWeight="bold" marginRight="1rem">
                                     URL:
                                 </Box>
-                                <Box fontWeight="regular">{chainContext.user.space.rent.url}</Box>
+                                <Box fontWeight="regular">{userSpace.rent.url}</Box>
                             </Box>
                         </Typography>
                     </Box>
@@ -166,16 +179,34 @@ export default function Space() {
         }
     };
     return (
-        <Box display="flex" flexDirection="column" style={{ width: '85%', margin: 'auto' }}>
-            <Typography
-                variant="h4"
-                gutterBottom
-                style={{ marginTop: '4rem', textAlign: 'center', fontWeight: 'bold' }}
-            >
-                SPACE
+        <div>
+            <Box display="flex" flexDirection="column" style={{ width: '85%', margin: 'auto' }}>
+                <Typography
+                    variant="h4"
+                    gutterBottom
+                    style={{ marginTop: '4rem', textAlign: 'center', fontWeight: 'bold' }}
+                >
+                    SPACE
             </Typography>
-            {renderContext()}
-            {renderContextStatus()}
-        </Box>
+                {renderContext()}
+                {renderContextStatus()}
+            </Box>
+            <Dialog
+                open={finishedTx && (successBuying || errorBuying)}
+                onClose={() => { setFinishedTx(false); setSuccessBuying(false); setErrorBuying(false); }}
+            >
+                <DialogTitle>Buying Space</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {successBuying ? 'You\'ve bought a new space!' : (errorBuying ? 'An error occured buying a new space!' : '')}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => { setFinishedTx(false); setSuccessBuying(false); setErrorBuying(false); }} color="primary">
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </div>
     );
 }
