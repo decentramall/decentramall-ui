@@ -57,7 +57,7 @@ export const Home = (): JSX.Element => {
                 })}
                 <div className={classes.logo}>
                     <img src="images/logo.png" />
-                    <Button variant="contained" color="primary">
+                    <Button variant="contained" color="primary" href={appendBaseURL('navigate', true)}>
                         Search
                     </Button>
                     <Button variant="contained" color="primary" href={appendBaseURL('user', true)}>
