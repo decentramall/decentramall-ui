@@ -27,10 +27,11 @@ export default function Space() {
         if (signer !== undefined) {
             const signerAddress = await signer.getAddress();
             (estateAgentInstance.connect(signer) as ethers.Contract & EstateAgentInstance)
-                .buy({ from: signerAddress, value: nextPrice })
-                .then(console.log);
+            .buy({ from: signerAddress, value: nextPrice })
+            .then((response) => {
+                response.wait(1).then(window.location.reload(false)) 
+            });
         }
-        // TODO: refresh page after buying successfully
     };
 
     const renderContext = () => {
