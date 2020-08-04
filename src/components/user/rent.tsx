@@ -25,10 +25,7 @@ export default function Rent() {
         try {
             const storage = new FFSStorage();
             setDealInProgress(true);
-            const cid = await storage.submitStorage(picture, title, description, category, url, () =>
-                setDealInProgress(false)
-            );
-            chainContext.spaces.forEach((s) => chainContext.rentalAgentInstance.spaceInfo(s.tokenId).then(console.log));
+            const cid = await storage.submitStorage(picture, title, description, category, url, () => { });
             // choose one SPACE without rent
             const notRented = chainContext.spaces.filter(
                 async (s) =>
@@ -48,8 +45,12 @@ export default function Rent() {
                 chainContext.user.signer
             ) as ethers.Contract & RentalAgentInstance;
             const signerAddress = await chainContext.user.signer.getAddress();
-            await rentalAgentInstanceWithSigner.rent(notRented[0].tokenId, cid, { from: signerAddress, value: rentPrice });
-            // TODO: wait for storage deal and tx to finish and update user UI with rent
+            await rentalAgentInstanceWithSigner
+                .rent(notRented[0].tokenId, cid, { from: signerAddress, value: rentPrice });
+            // wait just for tx to finish and update user UI with rent
+            setDealInProgress(false)
+            setFinishedTx(true);
+            setSuccessRenting(true);
         } catch (e) {
             setDealInProgress(false)
             setFinishedTx(true);
@@ -84,7 +85,7 @@ export default function Rent() {
         // chack if user does not have rented space
         if (chainContext.user.rent === undefined) {
             return (
-                <>
+                <div style={{ marginLeft: '30%', padding: '20px' }}>
                     <form className={classes.root} noValidate autoComplete="off">
                         <TextField
                             label="Title"
@@ -92,6 +93,7 @@ export default function Rent() {
                             value={title}
                             required
                             onChange={handleChangeInput}
+                            style={{ width: '400px' }}
                         />
                         <TextField
                             label="Description"
@@ -99,6 +101,8 @@ export default function Rent() {
                             value={description}
                             required
                             onChange={handleChangeInput}
+                            multiline
+                            style={{ width: '400px' }}
                         />
                         <TextField
                             label="Category"
@@ -106,6 +110,7 @@ export default function Rent() {
                             value={category}
                             required
                             onChange={handleChangeInput}
+                            style={{ width: '400px' }}
                         />
                         <TextField
                             label="URL"
@@ -113,6 +118,7 @@ export default function Rent() {
                             value={url}
                             required
                             onChange={handleChangeInput}
+                            style={{ width: '400px' }}
                         />
                         <Input type="file" onChange={selectImage} />
                     </form>
@@ -135,10 +141,11 @@ export default function Rent() {
                             </Button>
                         </DialogActions>
                     </Dialog>
-                </>
+                </div>
             );
         } else {
-            <p>{JSON.stringify(chainContext.user.rent)}</p>;
+            // TODO: properly present rent details
+            return <p>{JSON.stringify(chainContext.user.rent)}</p>;
         }
     };
 
