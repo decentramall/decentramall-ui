@@ -31,7 +31,6 @@ export interface IUser {
 }
 
 export interface IChainContext {
-    ethereum: any;
     spaces: ISpace[];
     user: IUser;
     decentramallTokenInstance?: ethers.Contract & DecentramallTokenInstance;
