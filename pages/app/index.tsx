@@ -111,7 +111,7 @@ export const Home = (): JSX.Element => {
                     </Box>
                 <StackGrid
                     duration={480}
-                    columnWidth={'33.33%'} 
+                    columnWidth={window.innerWidth <= 768 ? '100%' : '33.33%'} 
                     gutterWidth={5}
                     gutterHeight={5}
                     easing={easings.quartOut}
