@@ -5,6 +5,9 @@ import DecentramallTokenJSON from './abi/DecentramallToken.json';
 import EstateAgentJSON from './abi/EstateAgent.json';
 import RentalAgentJSON from './abi/RentalAgent.json';
 import { DecentramallTokenInstance, EstateAgentInstance, RentalAgentInstance } from './types/index';
+import ChainChangeAlert from '../components/alerts/chainChangeAlert';
+import { render } from '@testing-library/react';
+import { useEffect } from 'react';
 
 const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_JSON_RPC);
 
@@ -74,9 +77,25 @@ const loadSpaces = async (signer: ethers.Signer) => {
                 spaces.push(await mapSpace(ifaceEstateAgent.parseLog(logsEstateAgent[x]).args));
             }
             userSpace = spaces.find((s) => s.buyer === signerAddress);
-            console.log('mappedSpace', spaces);
+            console.log('mappedSpace', spaces);            
         }
+        
+        await (window as any).ethereum.on('accountsChanged', (accounts) => {
+            window.location.reload(false);
+        })
+        await (window as any).ethereum.on('chainChanged', (chainId) => {
+            switch(parseInt(chainId, 16)) {
+                case 3: case 1337:
+                    break;
+                default:
+                    //TODO: Insert MUI element instead
+                    alert("You are not on Ropsten!")
+                    break;
+            }
+        })
+        
     }
+
     return {
         userSpace,
         userRent,
