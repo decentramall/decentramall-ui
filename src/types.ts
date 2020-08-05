@@ -5,7 +5,7 @@ export interface IStorage {
     title: string;
     description: string;
     category: string;
-    logo: string;
+    logo: Uint8Array;
     url: string;
 }
 export interface IRent extends IStorage {

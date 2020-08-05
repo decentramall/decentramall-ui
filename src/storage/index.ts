@@ -80,7 +80,7 @@ export default class FFSStorage {
 
     async getStorage(cid: string) {
         const jsonContent: IStorage = JSON.parse(new TextDecoder('utf-8').decode(await this.PowerGate.ffs.get(cid)));
-        const image = await this.PowerGate.ffs.get(jsonContent.logo);
+        const image = await this.PowerGate.ffs.get(jsonContent.logo as any); // at this point, it is a string
         const result = {
             ...jsonContent,
             logo: image,
