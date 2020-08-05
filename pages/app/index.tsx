@@ -111,7 +111,7 @@ export const Home = (): JSX.Element => {
                     </Box>
                 <StackGrid
                     duration={480}
-                    columnWidth={150}
+                    columnWidth={'33.33%'} 
                     gutterWidth={5}
                     gutterHeight={5}
                     easing={easings.quartOut}
@@ -121,6 +121,7 @@ export const Home = (): JSX.Element => {
                     entered={transition.entered}
                     leaved={transition.leaved}
                     rtl={false}
+                    style={{marginTop: '2rem'}}
                 >
                     {chainContext.spaces.filter(space => 
                         space.rent?.title.toLowerCase().includes(search.toLowerCase())).map((space) => (

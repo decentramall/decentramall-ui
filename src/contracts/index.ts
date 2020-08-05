@@ -30,6 +30,7 @@ const loadSpaces = async (signer: ethers.Signer) => {
     let userRent: IRent;
     let userSpace: ISpace;
     const spaces: ISpace[] = [];
+    const ethereum = (window as any).ethereum;
     const signerAddress = await signer.getAddress();
     const totalTokens = await decentramallTokenInstance.totalSupply();
     if (totalTokens.toNumber() > 0) {
@@ -81,6 +82,7 @@ const loadSpaces = async (signer: ethers.Signer) => {
         userSpace,
         userRent,
         spaces,
+        ethereum,
     };
 };
 
