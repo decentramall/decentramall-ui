@@ -58,30 +58,15 @@ export default function Space() {
     const renderContext = () => {
         if (userSpace !== undefined) {
             return (
-                <Box display="flex" flexDirection="column" margin="auto" justifyContent="center" alignItems="center">
-                    <Typography component="div" gutterBottom style={{ marginTop: '4rem', textAlign: 'center' }}>
-                        <Box fontWeight="lighter" fontSize="2rem" marginBottom="3rem">
-                            Below are the details of your space
-                        </Box>
-                        <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                <Box display="flex" flexDirection="column" margin="auto">
+                    <Typography component="div" gutterBottom style={{ margin: '4rem 0' }}>
+                        <Box display="flex" flexDirection="row" fontSize="1rem">
                             <Box fontWeight="bold" marginRight="1rem">
-                                Buyer:
-                            </Box>
-                            <Box fontWeight="regular">{userSpace.buyer}</Box>
-                        </Box>
-                        <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
-                            <Box fontWeight="bold" marginRight="1rem">
-                                Price:
+                                Buying price:
                             </Box>
                             <Box fontWeight="regular">
                                 {(parseFloat(userSpace.price) / 10 ** 18).toFixed(8)} ETH
                             </Box>
-                        </Box>
-                        <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
-                            <Box fontWeight="bold" marginRight="1rem">
-                                Token ID:
-                            </Box>
-                            <Box fontWeight="regular">{userSpace.tokenId}</Box>
                         </Box>
                     </Typography>
                 </Box>
@@ -109,48 +94,43 @@ export default function Space() {
         if (userSpace !== undefined) {
             if (userSpace.rent !== undefined) {
                 return (
-                    <Box
-                        display="flex"
-                        flexDirection="column"
-                        margin="auto"
-                        justifyContent="center"
-                        alignItems="center"
-                    >
-                        <Typography component="div" gutterBottom style={{ marginTop: '4rem', textAlign: 'center' }}>
-                            <Box fontWeight="lighter" fontSize="2rem" marginBottom="3rem" textAlign="left">
-                                Space status: rented
+                    <Box display="flex" flexDirection="column" margin="auto">
+                        <Typography component="div" gutterBottom style={{ margin: '4rem 0' }}>
+                            <Box display="flex" flexDirection="row" fontSize="1rem" marginBottom="2rem" textAlign="center">
+                                <Box fontWeight="bold" marginRight="1rem">Space status: </Box>
+                                <Box fontWeight="regular">rented</Box>
                             </Box>
-                            <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                            <Box display="flex" flexDirection="row" fontSize="1rem" marginBottom="2rem">
                                 <Box fontWeight="bold" marginRight="1rem">
                                     Rented to:
                                 </Box>
                                 <Box fontWeight="regular">{userSpace.rent.rentedTo}</Box>
                             </Box>
-                            <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                            <Box display="flex" flexDirection="row" fontSize="1rem" marginBottom="2rem">
                                 <Box fontWeight="bold" marginRight="1rem">
                                     Rental earned:
                                 </Box>
                                 <Box fontWeight="regular">{userSpace.rent.rentalEarned}</Box>
                             </Box>
-                            <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                            <Box display="flex" flexDirection="row" fontSize="1rem" marginBottom="2rem">
                                 <Box fontWeight="bold" marginRight="1rem">
                                     Store's name:
                                 </Box>
                                 <Box fontWeight="regular">{userSpace.rent.title}</Box>
                             </Box>
-                            <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                            <Box display="flex" flexDirection="row" fontSize="1rem" marginBottom="2rem">
                                 <Box fontWeight="bold" marginRight="1rem">
                                     Category:
                                 </Box>
                                 <Box fontWeight="regular">{userSpace.rent.category}</Box>
                             </Box>
-                            <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                            <Box display="flex" flexDirection="row" fontSize="1rem" marginBottom="2rem">
                                 <Box fontWeight="bold" marginRight="1rem">
                                     Description:
                                 </Box>
                                 <Box fontWeight="regular">{userSpace.rent.description}</Box>
                             </Box>
-                            <Box display="flex" flexDirection="row" fontSize="1.5rem" marginBottom="2rem">
+                            <Box display="flex" flexDirection="row" fontSize="1rem" marginBottom="2rem">
                                 <Box fontWeight="bold" marginRight="1rem">
                                     URL:
                                 </Box>
@@ -161,16 +141,11 @@ export default function Space() {
                 );
             } else {
                 return (
-                    <Box
-                        display="flex"
-                        flexDirection="column"
-                        margin="auto"
-                        justifyContent="center"
-                        alignItems="center"
-                    >
-                        <Typography variant="h5" gutterBottom style={{ marginTop: '4rem', textAlign: 'left' }}>
-                            <Box fontWeight="lighter" fontSize="2rem" marginBottom="3rem" textAlign="left">
-                                Space status: available for rent
+                    <Box display="flex" flexDirection="column" margin="auto">
+                        <Typography variant="h5" gutterBottom style={{ marginTop: '1rem' }}>
+                            <Box display="flex" flexDirection="row" fontSize="1rem">
+                                <Box fontWeight="bold" marginRight="1rem">Space status: </Box>
+                                <Box fontWeight="regular">available for rent</Box>
                             </Box>
                         </Typography>
                     </Box>
@@ -180,14 +155,14 @@ export default function Space() {
     };
     return (
         <div>
-            <Box display="flex" flexDirection="column" style={{ width: '85%', margin: 'auto' }}>
-                <Typography
-                    variant="h4"
-                    gutterBottom
-                    style={{ marginTop: '4rem', textAlign: 'center', fontWeight: 'bold' }}
-                >
-                    SPACE
+            <Typography
+                variant="h4"
+                gutterBottom
+                style={{ marginTop: '4rem', textAlign: 'center', fontWeight: 'bold' }}
+            >
+                YOUR SPACE
             </Typography>
+            <Box display="flex" flexDirection="row" style={{ width: '100%' }}>
                 {renderContext()}
                 {renderContextStatus()}
             </Box>
