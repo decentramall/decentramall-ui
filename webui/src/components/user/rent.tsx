@@ -27,12 +27,23 @@ export default function Rent() {
             setDealInProgress(true);
             const cid = await storage.submitStorage(picture, title, description, category, url, () => { });
             // choose one SPACE without rent
-            const notRented = chainContext.spaces.filter(
-                async (s) =>
-                    ((await chainContext.rentalAgentInstance.spaceInfo(s.tokenId)) as any).rentedTo ===
-                    '0x0000000000000000000000000000000000000000'
-            );
 
+            let notRented = [];
+            for(let i = 0; i < chainContext.spaces.length; i++) {
+                let s = chainContext.spaces[i];
+                if(((await chainContext.rentalAgentInstance.spaceInfo(s.tokenId)) as any).rentedTo === '0x0000000000000000000000000000000000000000'){
+                    notRented.push(s)
+                }
+            }
+            
+            // const notRented = chainContext.spaces.filter(async (s) => {
+                    
+            //         console.log("Space1: " + (await chainContext.rentalAgentInstance.spaceInfo(s.tokenId))[1])
+            //         console.log(((await chainContext.rentalAgentInstance.spaceInfo(s.tokenId)) as any).rentedTo === '0x0000000000000000000000000000000000000000')
+            //        return ((await chainContext.rentalAgentInstance.spaceInfo(s.tokenId)) as any).rentedTo === '0x0000000000000000000000000000000000000000'
+            //     }
+            // );
+            console.log("Not rented: " + notRented)
             const totalSupply = BigNumber.from((await chainContext.decentramallTokenInstance.totalSupply()).toString());
 
             const rentPrice = BigNumber.from(
