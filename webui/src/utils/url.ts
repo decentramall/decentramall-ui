@@ -1,9 +1,7 @@
-const BASE_URL = process.env.BASE_URL;
-
-export const appendBaseURL = (path: string, appendHtmlExtension: boolean) => {
-    if (BASE_URL && BASE_URL.length) {
-        const { href } = new URL(appendHtmlExtension ? `${path}.html` : path, BASE_URL);
-        return href;
+export const appendBaseURL = (path: string) => {
+    if (process.env.NODE_ENV === 'development') {
+        return `/${path}`;
+    } else {
+        return `${path}.html`;
     }
-    return path;
 };

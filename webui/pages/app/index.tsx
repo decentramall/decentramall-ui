@@ -61,7 +61,7 @@ export const Home = (): JSX.Element => {
                     alignItems: 'center',
                 }}
             >
-                <Button variant="contained" color="primary" href={appendBaseURL('app/user', true)}>
+                <Button variant="contained" color="primary" href={appendBaseURL('app/user')}>
                     Go Profile
                 </Button>
                 <Grid item xs={12} className={classes.formContainer}>
@@ -100,7 +100,7 @@ export const Home = (): JSX.Element => {
             >
                 {chainContext.spaces.filter(space =>
                     space.rent?.title.toLowerCase().includes(search.toLowerCase())).map((space) => (
-                        <Paper>
+                        <Paper key={space.tokenId}>
                             <img width="250" src={URL.createObjectURL(new Blob([space.rent.logo], { type: "image/jpeg" }))} />
                             <Typography component="div" gutterBottom>
                                 <Box fontWeight="bold" fontSize="1.5rem" style={{ margin: '1rem' }}>
