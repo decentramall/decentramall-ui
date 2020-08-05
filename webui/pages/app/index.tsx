@@ -101,6 +101,7 @@ export const Home = (): JSX.Element => {
                 {chainContext.spaces.filter(space =>
                     space.rent?.title.toLowerCase().includes(search.toLowerCase())).map((space) => (
                         <Paper>
+                            <img width="250" src={URL.createObjectURL(new Blob([space.rent.logo], { type: "image/jpeg" }))} />
                             <Typography component="div" gutterBottom>
                                 <Box fontWeight="bold" fontSize="1.5rem" style={{ margin: '1rem' }}>
                                     {space.rent.title}
