@@ -1,54 +1,92 @@
-import { Button, Paper } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import React from 'react';
+import { Button, Paper, createStyles, Grid, makeStyles, Theme, IconButton, InputBase, Container, Typography, Box } from '@material-ui/core';
+import React, { useContext, useState } from 'react';
 import { appendBaseURL } from '../../src/utils/url';
 import StackGrid, { easings, transitions } from 'react-stack-grid';
+import SearchIcon from '@material-ui/icons/Search';
+import { ChainContext } from '../_app';
 
-const useStyles = makeStyles((theme) => ({
-    storeContainer: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, 212px)',
-        gridAutoRows: '139px',
-        gridAutoFlow: 'dense',
-        gridGap: '3px',
-        background: `linear-gradient(to right, ${theme.palette.background.default}, ${theme.palette.grey['A400']})`,
-    },
-    store: {
-        overflow: 'hidden',
-        display: 'grid',
-        '& img': {
-            gridColumn: '1 / -1',
-            gridRow: '1 / -1',
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            top: '10px',
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            flexGrow: 1,
         },
-        gridColumn: 'span 2',
-    },
-    logo: {
-        display: 'grid',
-        objectFit: 'cover',
-        gridColumn: 'span 6',
-        alignSelf: 'center',
-        justifySelf: 'center',
-    },
-}));
-
+        control: {
+            padding: theme.spacing(2),
+        },
+        formContainer: {
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        form: {
+            padding: '2px 4px',
+            display: 'flex',
+            alignItems: 'center',
+            width: 400,
+        },
+        input: {
+            marginLeft: theme.spacing(1),
+            flex: 1,
+        },
+        iconButton: {
+            padding: 10,
+        },
+        logo: {
+            display: 'grid',
+            objectFit: 'cover',
+            gridColumn: 'span 6',
+            alignSelf: 'center',
+            justifySelf: 'center',
+        },
+    })
+);
 
 export const Home = (): JSX.Element => {
+    const chainContext = useContext(ChainContext);
     const classes = useStyles();
+    const [search, setSearch] = useState('');
 
     const transition = transitions['fadeDown'];
     // TODO: load stores into stackgrid
     return (
-        <div>
-            <Button variant="contained" color="primary" href={appendBaseURL('app/user', true)}>
-                Go Profile
-            </Button>
+        <Container maxWidth="lg">
+            <Grid
+                container
+                justify="center"
+                spacing={5}
+                style={{
+                    marginTop: '20%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <Button variant="contained" color="primary" href={appendBaseURL('app/user', true)}>
+                    Go Profile
+                </Button>
+                <Grid item xs={12} className={classes.formContainer}>
+                    <Paper component="form" className={classes.form}>
+                        <InputBase
+                            className={classes.input}
+                            placeholder="Search Decentramall Stores"
+                            inputProps={{ 'aria-label': 'search stores' }}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                        <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                            <SearchIcon />
+                        </IconButton>
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Box fontWeight="bold" fontSize="1.2rem" textAlign="center">
+                        Stores Currently Open
+                    </Box>
+                </Grid>
+            </Grid>
             <StackGrid
                 duration={480}
-                columnWidth={150}
+                columnWidth={250}
                 gutterWidth={5}
                 gutterHeight={5}
                 easing={easings.quartOut}
@@ -58,24 +96,28 @@ export const Home = (): JSX.Element => {
                 entered={transition.entered}
                 leaved={transition.leaved}
                 rtl={false}
+                style={{ marginTop: '2rem' }}
             >
-                <div key="key1">
-                    <Paper elevation={3} style={{ height: '150px' }}>
-                        Item 1
-                    </Paper>
-                </div>
-                <div key="key2">
-                    <Paper elevation={3} style={{ height: '100px' }}>
-                        Item 2
-                    </Paper>
-                </div>
-                <div key="key3">
-                    <Paper elevation={3} style={{ height: '200px' }}>
-                        Item 3
-                    </Paper>
-                </div>
+                {chainContext.spaces.filter(space =>
+                    space.rent?.title.toLowerCase().includes(search.toLowerCase())).map((space) => (
+                        <Paper>
+                            <img width="250" src={URL.createObjectURL(new Blob([space.rent.logo], { type: "image/jpeg" }))} />
+                            <Typography component="div" gutterBottom>
+                                <Box fontWeight="bold" fontSize="1.5rem" style={{ margin: '1rem' }}>
+                                    {space.rent.title}
+                                </Box>
+                                <Box fontSize="1rem" style={{ margin: '1rem' }}>
+                                    {space.rent.description}
+                                </Box>
+                                <Box fontSize="1rem" style={{ margin: '1rem' }}>
+                                    Category: {space.rent.category}
+                                </Box>
+                            </Typography>
+                        </Paper>
+                    ))
+                }
             </StackGrid>
-        </div>
+        </Container>
     );
 };
 

@@ -1,4 +1,5 @@
 import { createPow } from '@textile/powergate-client';
+import { IStorage } from '../types';
 
 export default class FFSStorage {
     private PowerGate = createPow({ host: process.env.NEXT_PUBLIC_POWERGATE_URL });
@@ -78,6 +79,12 @@ export default class FFSStorage {
     }
 
     async getStorage(cid: string) {
-        return JSON.parse(new TextDecoder('utf-8').decode(await this.PowerGate.ffs.get(cid)));
+        const jsonContent: IStorage = JSON.parse(new TextDecoder('utf-8').decode(await this.PowerGate.ffs.get(cid)));
+        const image = await this.PowerGate.ffs.get(jsonContent.logo as any); // at this point, it is a string
+        const result = {
+            ...jsonContent,
+            logo: image,
+        }
+        return result;
     }
 }
