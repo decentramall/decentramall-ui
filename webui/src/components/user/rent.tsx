@@ -74,6 +74,7 @@ export default function Rent() {
             setSuccessRenting(true);
         } catch (e) {
             console.log(e)
+            console.log("here")
             setDealInProgress(false)
             setFinishedTx(true);
             setErrorRenting(true);
