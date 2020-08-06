@@ -171,14 +171,14 @@ export default function Space() {
     };
     return (
         <div>
-            <Box display="flex" flexDirection="column" style={{ width: '85%', margin: 'auto' }}>
-                <Typography
-                    variant="h4"
-                    gutterBottom
-                    style={{ marginTop: '4rem', textAlign: 'center', fontWeight: 'bold' }}
-                >
-                    SPACE
+            <Typography
+                variant="h4"
+                gutterBottom
+                style={{ marginTop: '4rem', textAlign: 'center', fontWeight: 'bold' }}
+            >
+                YOUR SPACE
             </Typography>
+            <Box display="flex" flexDirection="row" style={{ width: '100%' }}>
                 {renderContext()}
                 {renderContextStatus()}
             </Box>
