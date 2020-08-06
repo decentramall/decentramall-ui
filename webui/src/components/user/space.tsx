@@ -89,7 +89,7 @@ export default function Space() {
             );
         } else {
             return (
-                <Box display="flex" flexDirection="column" margin="auto" justifyContent="center" alignItems="center">
+                <Box display="flex" flexDirection="column" margin="auto" justifyContent="center" alignItems="center" marginBottom="10%">
                     <Typography variant="h5" gutterBottom style={{ marginTop: '4rem', textAlign: 'center' }}>
                         This space would cost you {ethers.utils.formatEther(BigNumber.from(nextPrice))} ETH
                     </Typography>

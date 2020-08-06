@@ -141,8 +141,13 @@ export default function Rent() {
         // chack if user does not have rented space
         if (chainContext.user.rent === undefined) {
             return (
-                <div style={{ marginLeft: '30%', padding: '20px' }}>
-                    <form className={classes.root} noValidate autoComplete="off">
+                <div style={{display: 'flex', flexDirection:'column', padding: '20px', alignItems: 'center'}}>
+                    <Typography component="div" gutterBottom style={{lineHeight: '3rem', marginTop: '4rem'}}>
+                            <Box fontWeight="bold" fontSize="2rem" textAlign="center">
+                                Enter Your Rent Details
+                            </Box>
+                    </Typography>
+                    <form style={{display:'flex', flexDirection: 'column', margin: '1rem'}} noValidate autoComplete="off">
                         <TextField
                             label="Title"
                             name="title"
@@ -187,7 +192,6 @@ export default function Rent() {
                                 endAdornment={<InputAdornment position="start"><CameraAltIcon /></InputAdornment>}
                                 style={{width: '100%', padding: '10px'}}/>
                             </Box>
-                            
                         </Typography>
                     </form>
                     <Button onClick={handleSubmitNewRent}>Submit</Button>
@@ -234,7 +238,7 @@ export default function Rent() {
                     <Grid item xs={12}>
                         <Typography component="div" gutterBottom style={{lineHeight: '3rem'}}>
                             <Box fontWeight="bold" fontSize="2rem" textAlign="center">
-                                Rent Details
+                                Your Rent Details
                             </Box>
                             
                             <Box marginTop='3rem' margin="auto" justifyContent="center" width="30vw">
