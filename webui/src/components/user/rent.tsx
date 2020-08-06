@@ -123,7 +123,13 @@ export default function Rent() {
                 if(event.target.value === "") {
                     setUrlFieldErr(true);
                 } else {
-                    setUrlFieldErr(false);
+                    let pattern =/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+                    var regex = new RegExp(pattern);
+                    if(event.target.value.match(regex)){
+                        setUrlFieldErr(false);
+                    } else {
+                        setUrlFieldErr(true);
+                    }
                 }
                 break;
         }
