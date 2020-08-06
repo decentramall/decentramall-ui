@@ -1,11 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { Button, Input, makeStyles, TextField, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography, Box, InputAdornment, Grid } from '@material-ui/core';
+import { Button, Input, makeStyles, TextField, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography, Box, InputAdornment, Grid, Link } from '@material-ui/core';
 import { ChainContext } from '../../../pages/_app';
 import { ethers, BigNumber } from 'ethers';
 import { RentalAgentInstance } from '../../contracts/types/index';
 import FFSStorage from '../../storage';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
 import HttpIcon from '@material-ui/icons/Http';
+import StoreCard from '../store/storeCard';
 
 export default function Rent() {
     const chainContext = useContext(ChainContext);
@@ -229,52 +230,17 @@ export default function Rent() {
             );
         } else {
             return(
-                <Grid container style={{width: '85%', margin: 'auto', marginTop: '7%', marginBottom: '7%'}}>
+                <Grid container style={{width: '85%', margin: 'auto', marginTop: '4rem', marginBottom: '7%'}}>
                     <Grid item xs={12}>
                         <Typography component="div" gutterBottom style={{lineHeight: '3rem'}}>
                             <Box fontWeight="bold" fontSize="2rem" textAlign="center">
                                 Rent Details
                             </Box>
-                            <Box display="flex" flexDirection="row">
-                                <Box fontWeight="bold" fontSize="1.2rem" style={{marginRight: '1rem'}}>
-                                    Title: 
-                                </Box>
-                                <Box fontSize="1.2rem">
-                                    {chainContext.user.rent.title}
-                                </Box>
-                            </Box>
-                            <Box display="flex" flexDirection="row">
-                                <Box fontWeight="bold" fontSize="1.2rem" style={{marginRight: '1rem'}}>
-                                    Description: 
-                                </Box>
-                                <Box fontSize="1.2rem">
-                                    {chainContext.user.rent.description}
-                                </Box>
-                            </Box>
-                            <Box display="flex" flexDirection="row">
-                                <Box fontWeight="bold" fontSize="1.2rem" style={{marginRight: '1rem'}}>
-                                    Category: 
-                                </Box>
-                                <Box fontSize="1.2rem">
-                                    {chainContext.user.rent.category}
-                                </Box>
-                            </Box>
-                            <Box display="flex" flexDirection="row">
-                                <Box fontWeight="bold" fontSize="1.2rem" style={{marginRight: '1rem', display:"flex", alignItems: 'center'}}>
-                                    {/* <HttpIcon style={{fontSize: '2.2rem' }}/> */}
-                                    URL: 
-                                </Box>
-                                <Box fontSize="1.2rem">
-                                    {chainContext.user.rent.url}
-                                </Box>
-                            </Box>
-                            <Box display="flex" flexDirection="row">
-                                <Box fontWeight="bold" fontSize="1.2rem" style={{marginRight: '1rem'}}>
-                                    Image: 
-                                </Box>
-                                <Box fontSize="1.2rem">
-                                    <img width="250" src={URL.createObjectURL(new Blob([chainContext.user.rent.logo], { type: "image/jpeg" }))} />
-                                </Box>
+                            
+                            <Box marginTop='3rem' margin="auto" justifyContent="center" width="30vw">
+                                <Link style={{textDecoration: 'none'}} href={chainContext.user.rent.url.includes("http") ? chainContext.user.rent.url : `https://${chainContext.user.rent.url}`}>
+                                    <StoreCard rentInfo={chainContext.user.rent} />
+                                </Link>
                             </Box>
                         </Typography>
                     </Grid>
