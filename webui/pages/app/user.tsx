@@ -41,12 +41,22 @@ export default function Home() {
 
     useEffect(() => {
         async function checkTotalSupply() {
+            let availableCount = 0;
+            for(let i = 0; i < chainContext.spaces.length; i++) {
+                let s = chainContext.spaces[i];
+                if(s.rent === undefined){
+                    availableCount++;
+                }
+            }
+
             if (decentramallTokenInstance !== undefined) {
                 const totalSupply = BigNumber.from(
                     await decentramallTokenInstance.totalSupply()
                 ).toNumber();
-                if (totalSupply === 0) {
-                    setDisabled(true);
+                if (totalSupply === 0 || availableCount === 0) {
+                    if(user.rent === undefined){
+                        setDisabled(true);
+                    }
                 }
                 setSignerAddress(await chainContext.user.signer.getAddress());
                 setLoading(false);
