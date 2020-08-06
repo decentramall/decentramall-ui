@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react';
-import { Button, Input, makeStyles, TextField, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import { Button, Input, makeStyles, TextField, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography, Box, InputAdornment } from '@material-ui/core';
 import { ChainContext } from '../../../pages/_app';
 import { ethers, BigNumber } from 'ethers';
 import { RentalAgentInstance } from '../../contracts/types/index';
 import FFSStorage from '../../storage';
+import CameraAltIcon from '@material-ui/icons/CameraAlt';
 
 export default function Rent() {
     const chainContext = useContext(ChainContext);
@@ -20,16 +21,17 @@ export default function Rent() {
     const [successRenting, setSuccessRenting] = useState(false);
     const [finishedTx, setFinishedTx] = useState(false);
 
-    const [titleFieldErr, setTitleFieldErr] = useState(false);
-    const [descriptionFieldErr, setDescriptionFieldErr] = useState(false);
-    const [categoryFieldErr, setCategoryFieldErr] = useState(false);
-    const [urlFieldErr, setUrlFieldErr] = useState(false);
+    const [titleFieldErr, setTitleFieldErr] = useState(true);
+    const [descriptionFieldErr, setDescriptionFieldErr] = useState(true);
+    const [categoryFieldErr, setCategoryFieldErr] = useState(true);
+    const [urlFieldErr, setUrlFieldErr] = useState(true);
+    const [fieldErr, setFieldErr] = useState(false);
 
     const handleSubmitNewRent = async () => {
         // TODO: verify fields
         if(titleFieldErr || descriptionFieldErr || categoryFieldErr || urlFieldErr) {
             console.log("empty")
-            setErrorRenting(true);
+            setFieldErr(true);
             return;
         }
         try {
@@ -134,47 +136,55 @@ export default function Rent() {
                             label="Title"
                             name="title"
                             value={title}
-                            required
                             onChange={handleChangeInput}
-                            style={{ width: '400px' }}
+                            style={{ width: '400px', marginBottom: '2rem'  }}
                             error={titleFieldErr}
+                            variant="outlined"
                         />
                         <TextField
                             label="Description"
                             name="description"
                             value={description}
-                            required
                             onChange={handleChangeInput}
                             multiline
-                            style={{ width: '400px' }}
+                            style={{ width: '400px', marginBottom: '2rem'  }}
                             error={descriptionFieldErr}
+                            variant="outlined"
                         />
                         <TextField
                             label="Category"
                             name="category"
                             value={category}
-                            required
                             onChange={handleChangeInput}
-                            style={{ width: '400px' }}
+                            style={{ width: '400px', marginBottom: '2rem'  }}
                             error={categoryFieldErr}
+                            variant="outlined"
                         />
                         <TextField
                             label="URL"
                             name="url"
                             value={url}
-                            required
                             onChange={handleChangeInput}
-                            style={{ width: '400px' }}
+                            style={{ width: '400px', marginBottom: '2rem' }}
                             error={urlFieldErr}
+                            variant="outlined"
                         />
-                        <Input type="file" onChange={selectImage} />
+                        <Typography variant="body1">
+                            Store Image:
+                            <Box style={{display: 'flex', width: '400px', height: '50px', border: '1px #556cd6 solid', borderRadius: '5px', justifyContent: 'center', alignItems: 'center'}}>
+                            <Input type="file" onChange={selectImage} disableUnderline={true}
+                                endAdornment={<InputAdornment position="start"><CameraAltIcon /></InputAdornment>}
+                                style={{width: '100%', padding: '10px'}}/>
+                            </Box>
+                            
+                        </Typography>
                     </form>
                     <Button onClick={handleSubmitNewRent}>Submit</Button>
                     <br />
                     {dealInProgress && <CircularProgress />}
                     <Dialog
-                        open={errorRenting}
-                        onClose={() => { setErrorRenting(false); }}
+                        open={fieldErr}
+                        onClose={() => { setFieldErr(false); }}
                     >
                         <DialogTitle>Error!</DialogTitle>
                         <DialogContent>
@@ -183,7 +193,7 @@ export default function Rent() {
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => { setErrorRenting(false); }} color="primary">
+                            <Button onClick={() => { setFieldErr(false); }} color="primary">
                                 Close
                             </Button>
                         </DialogActions>
