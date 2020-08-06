@@ -25,13 +25,13 @@ export default function Rent() {
     const [descriptionFieldErr, setDescriptionFieldErr] = useState(true);
     const [categoryFieldErr, setCategoryFieldErr] = useState(true);
     const [urlFieldErr, setUrlFieldErr] = useState(true);
+    const [imageErr, setImageErr] = useState(true);
     const [fieldErr, setFieldErr] = useState(false);
     const [cidExists, setCidExists] = useState(false);
 
     const handleSubmitNewRent = async () => {
         // TODO: verify fields
-        if(titleFieldErr || descriptionFieldErr || categoryFieldErr || urlFieldErr) {
-            console.log("empty")
+        if(titleFieldErr || descriptionFieldErr || categoryFieldErr || urlFieldErr || imageErr) {
             setFieldErr(true);
             return;
         }
@@ -89,6 +89,7 @@ export default function Rent() {
 
     const selectImage = (event: React.ChangeEvent<any>) => {
         setPicture(event.target.files[0]);
+        setImageErr(false);
     };
 
     const handleChangeInput = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -191,7 +192,7 @@ export default function Rent() {
                         <DialogTitle>Error!</DialogTitle>
                         <DialogContent>
                             <DialogContentText id="alert-dialog-description">
-                                Please ensure that all fields are entered correctly!
+                                Please ensure that all fields are entered correctly! You must upload an image as well!
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
