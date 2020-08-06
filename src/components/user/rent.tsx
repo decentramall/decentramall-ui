@@ -20,8 +20,18 @@ export default function Rent() {
     const [successRenting, setSuccessRenting] = useState(false);
     const [finishedTx, setFinishedTx] = useState(false);
 
+    const [titleFieldErr, setTitleFieldErr] = useState(false);
+    const [descriptionFieldErr, setDescriptionFieldErr] = useState(false);
+    const [categoryFieldErr, setCategoryFieldErr] = useState(false);
+    const [urlFieldErr, setUrlFieldErr] = useState(false);
+
     const handleSubmitNewRent = async () => {
         // TODO: verify fields
+        if(titleFieldErr || descriptionFieldErr || categoryFieldErr || urlFieldErr) {
+            console.log("empty")
+            setErrorRenting(true);
+            return;
+        }
         try {
             const storage = new FFSStorage();
             setDealInProgress(true);
@@ -63,6 +73,7 @@ export default function Rent() {
             setFinishedTx(true);
             setSuccessRenting(true);
         } catch (e) {
+            console.log(e)
             setDealInProgress(false)
             setFinishedTx(true);
             setErrorRenting(true);
@@ -79,15 +90,35 @@ export default function Rent() {
         switch (event.target.name) {
             case 'title':
                 setTitle(event.target.value);
+                if(event.target.value === "") {
+                    setTitleFieldErr(true);
+                } else {
+                    setTitleFieldErr(false);
+                }
                 break;
             case 'description':
                 setDescription(event.target.value);
+                if(event.target.value === "") {
+                    setDescriptionFieldErr(true);
+                } else {
+                    setDescriptionFieldErr(false);
+                }
                 break;
             case 'category':
                 setCategory(event.target.value);
+                if(event.target.value === "") {
+                    setCategoryFieldErr(true);
+                } else {
+                    setCategoryFieldErr(false);
+                }
                 break;
             case 'url':
                 setUrl(event.target.value);
+                if(event.target.value === "") {
+                    setUrlFieldErr(true);
+                } else {
+                    setUrlFieldErr(false);
+                }
                 break;
         }
     };
@@ -105,6 +136,7 @@ export default function Rent() {
                             required
                             onChange={handleChangeInput}
                             style={{ width: '400px' }}
+                            error={titleFieldErr}
                         />
                         <TextField
                             label="Description"
@@ -114,6 +146,7 @@ export default function Rent() {
                             onChange={handleChangeInput}
                             multiline
                             style={{ width: '400px' }}
+                            error={descriptionFieldErr}
                         />
                         <TextField
                             label="Category"
@@ -122,6 +155,7 @@ export default function Rent() {
                             required
                             onChange={handleChangeInput}
                             style={{ width: '400px' }}
+                            error={categoryFieldErr}
                         />
                         <TextField
                             label="URL"
@@ -130,12 +164,29 @@ export default function Rent() {
                             required
                             onChange={handleChangeInput}
                             style={{ width: '400px' }}
+                            error={urlFieldErr}
                         />
                         <Input type="file" onChange={selectImage} />
                     </form>
                     <Button onClick={handleSubmitNewRent}>Submit</Button>
                     <br />
                     {dealInProgress && <CircularProgress />}
+                    <Dialog
+                        open={errorRenting}
+                        onClose={() => { setErrorRenting(false); }}
+                    >
+                        <DialogTitle>Error!</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                Please ensure that all fields are entered correctly!
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => { setErrorRenting(false); }} color="primary">
+                                Close
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                     <Dialog
                         open={finishedTx && (successRenting || errorRenting)}
                         onClose={() => { setFinishedTx(false); setSuccessRenting(false); setErrorRenting(false); }}
