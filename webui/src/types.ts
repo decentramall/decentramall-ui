@@ -1,12 +1,14 @@
 import { ethers } from 'ethers';
 import { DecentramallTokenInstance, EstateAgentInstance, RentalAgentInstance } from '../src/contracts/types/index';
 
-export interface IRent {
+export interface IStorage {
     title: string;
     description: string;
     category: string;
-    logo: string;
+    logo: Uint8Array;
     url: string;
+}
+export interface IRent extends IStorage {
     //
     // rightfulOwner: string;
     rentedTo: string;
