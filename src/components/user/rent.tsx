@@ -26,6 +26,7 @@ export default function Rent() {
     const [categoryFieldErr, setCategoryFieldErr] = useState(true);
     const [urlFieldErr, setUrlFieldErr] = useState(true);
     const [fieldErr, setFieldErr] = useState(false);
+    const [cidExists, setCidExists] = useState(false);
 
     const handleSubmitNewRent = async () => {
         // TODO: verify fields
@@ -75,8 +76,9 @@ export default function Rent() {
             setFinishedTx(true);
             setSuccessRenting(true);
         } catch (e) {
-            console.log(e)
-            console.log("here")
+            if(e.toString().includes("cid already pinned")){
+                setCidExists(true);
+            }
             setDealInProgress(false)
             setFinishedTx(true);
             setErrorRenting(true);
@@ -169,7 +171,7 @@ export default function Rent() {
                             error={urlFieldErr}
                             variant="outlined"
                         />
-                        <Typography variant="body1">
+                        <Typography component="span" variant="body1">
                             Store Image:
                             <Box style={{display: 'flex', width: '400px', height: '50px', border: '1px #556cd6 solid', borderRadius: '5px', justifyContent: 'center', alignItems: 'center'}}>
                             <Input type="file" onChange={selectImage} disableUnderline={true}
@@ -205,7 +207,8 @@ export default function Rent() {
                         <DialogTitle>Renting Space</DialogTitle>
                         <DialogContent>
                             <DialogContentText id="alert-dialog-description">
-                                {successRenting ? 'You\'ve rent a space!' : (errorRenting ? 'An error occured renting a space!' : '')}
+                                {successRenting ? 'You\'ve rent a space!' : (errorRenting ? 'An error occured renting a space!\n': '')}
+                                <b>{cidExists? "This image has been used!" : ''}</b>
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
