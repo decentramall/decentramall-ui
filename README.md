@@ -28,10 +28,10 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 - [x] Buy SPACE
 - [x] Rent SPACE
 - [x] Load add SPACE tokens
-- [ ] Get user SPACE status (price when bought, rent (if any))
-- [ ] Get user rent status (price, expiration, etc)
-- [ ] Load all rents
-- [ ] Render spaces on mainpage
+- [x] Get user SPACE status (price when bought, rent (if any))
+- [x] Get user rent status (price, expiration, etc)
+- [x] Load all rents
+- [x] Render spaces on mainpage
 - [ ] Search mechanism
 - [ ] ...
 
