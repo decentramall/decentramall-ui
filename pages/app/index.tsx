@@ -1,5 +1,5 @@
-import { Button, Paper, createStyles, Grid, makeStyles, Theme, IconButton, InputBase, Container, Typography, Box } from '@material-ui/core';
-import React, { useContext, useState } from 'react';
+import { Button, Paper, createStyles, Grid, makeStyles, Theme, IconButton, InputBase, Container, Typography, Box, Link } from '@material-ui/core';
+import React, { useContext, useState, useEffect } from 'react';
 import { appendBaseURL } from '../../src/utils/url';
 import StackGrid, { easings, transitions } from 'react-stack-grid';
 import SearchIcon from '@material-ui/icons/Search';
@@ -46,9 +46,8 @@ export const Home = (): JSX.Element => {
     const chainContext = useContext(ChainContext);
     const classes = useStyles();
     const [search, setSearch] = useState('');
-
     const transition = transitions['fadeDown'];
-    // TODO: load stores into stackgrid
+
     return (
         <Container maxWidth="lg">
             <Grid
@@ -101,6 +100,8 @@ export const Home = (): JSX.Element => {
                 {chainContext.spaces.filter(space =>
                     space.rent?.title.toLowerCase().includes(search.toLowerCase())).map((space) => (
                         <Paper>
+                            {/* Temporarily use the url we include. We might generate a custom url in the future and can use that instead */}
+                            <Link style={{textDecoration: 'none'}} href={space.rent.url.includes("http") ? space.rent.url : `https://${space.rent.url}`}>
                             <img width="250" src={URL.createObjectURL(new Blob([space.rent.logo], { type: "image/jpeg" }))} />
                             <Typography component="div" gutterBottom>
                                 <Box fontWeight="bold" fontSize="1.5rem" style={{ margin: '1rem' }}>
@@ -113,6 +114,7 @@ export const Home = (): JSX.Element => {
                                     Category: {space.rent.category}
                                 </Box>
                             </Typography>
+                            </Link>
                         </Paper>
                     ))
                 }
