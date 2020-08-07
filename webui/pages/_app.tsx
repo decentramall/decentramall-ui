@@ -36,12 +36,16 @@ export default function MyApp(props: AppProps) {
             // send ether and pay to change state within the blockchain.
             // For this, we need the account signer...
             const signer = provider.getSigner();
+            let ensAddress = '';
+            if(parseInt((window as any).ethereum.chainId, 16) !== 1337){
+                ensAddress = await provider.lookupAddress(signer.getAddress());
+            }
             // load all spaces
             // a much more efficient way, would be to load from events, for example, using TheGraph
             const { spaces, userRent, userSpace } = await loadSpaces(signer);
             setStateContext({
                 spaces,
-                user: { space: userSpace, rent: userRent, signer },
+                user: { space: userSpace, rent: userRent, signer, ensAddress },
                 decentramallTokenInstance,
                 estateAgentInstance,
                 rentalAgentInstance,

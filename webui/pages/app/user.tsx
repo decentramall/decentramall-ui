@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { makeStyles, Container, Grid, Paper, Typography, Avatar } from '@material-ui/core';
+import { makeStyles, Container, Grid, Paper, Typography, Avatar, Box } from '@material-ui/core';
 import Rent from '../../src/components/user/rent';
 import Space from '../../src/components/user/space';
 import { ChainContext } from '../_app';
 import { BigNumber } from 'ethers';
+import Blockies from 'react-blockies';
 
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
@@ -71,15 +72,24 @@ export default function Home() {
 
     return (
         <>
-            <div style={{ width: '100%', marginLeft: '30%' }}>
-                <Paper elevation={3} style={{ width: '45%', padding: '10px', }}>
-                    <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
+            <div style={{ width: '100%', display:"flex"}}>
+                <Paper elevation={3} style={{ width: '45%', padding: '10px', margin: 'auto'}}>
+                    <Box display="flex" flexDirection="row" alignItems="center">
+                        <Blockies seed={signerAddress} size={10} scale={3} />
+                        {chainContext.user.ensAddress && 
+                        <Paper elevation={2} style={{ padding: '10px', display: 'flex', flexDirection: 'row', marginLeft: '1rem'}}>
+                            <img src="https://app.ens.domains/static/media/ensIconLogo.4d995d23.svg" width="20rem" style={{marginRight: '0.7rem'}}/>
+                            <Typography variant="body1" style={{fontWeight: 'bold'}}>
+                                {chainContext.user.ensAddress}
+                            </Typography>
+                        </Paper>}
+                    </Box>
                     <Typography variant="overline" display="block" gutterBottom>
-                        currently logged-in with <b>{signerAddress}</b>
+                        currently logged-in with <b>{signerAddress}</b> 
                     </Typography>
                 </Paper>
             </div>
-            <Container maxWidth="md">{view === 0 ? <Space /> : <Rent />}</Container>
+            <Box>{view === 0 ? <Space /> : <Rent />}</Box>
             <BottomNavigation
                 value={view}
                 onChange={(event, newValue) => {
